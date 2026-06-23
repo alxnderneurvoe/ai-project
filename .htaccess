@@ -1,0 +1,13 @@
+# Protect sensitive files from direct web access
+<FilesMatch "\.(json|ini|log|sh|git|md|csv)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes

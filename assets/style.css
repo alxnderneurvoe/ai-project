@@ -1,0 +1,325 @@
+/* ==========================================
+   Premium Dark Dashboard Theme & Design System
+   ========================================== */
+
+/* Core Variables & Tokens */
+:root {
+    --bg-main: #0b0f19;
+    --bg-card: #111827;
+    --bg-card-header: #1f2937;
+    --border-color: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    
+    /* Branding Accent Colors */
+    --color-indigo: #6366f1;
+    --color-indigo-hover: #4f46e5;
+    --color-success: #10b981;
+    --color-success-bg: rgba(16, 185, 129, 0.1);
+    --color-success-border: rgba(16, 185, 129, 0.2);
+    --color-warning: #f59e0b;
+    --color-warning-bg: rgba(245, 158, 11, 0.1);
+    --color-warning-border: rgba(245, 158, 11, 0.2);
+    --color-info: #0ea5e9;
+    --color-info-bg: rgba(14, 165, 233, 0.1);
+    --color-info-border: rgba(14, 165, 233, 0.2);
+    --color-danger: #ef4444;
+    --color-danger-bg: rgba(239, 68, 68, 0.1);
+    --color-danger-border: rgba(239, 68, 68, 0.2);
+}
+
+/* Global Styles */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.01em;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+    background: #1f2937;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #374151;
+}
+
+/* Navbar Redesign */
+.navbar {
+    background-color: rgba(17, 24, 39, 0.8) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #a5b4fc, #6366f1);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+}
+.navbar-brand::before {
+    content: "\f56e"; /* FontAwesome laptop icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 0.6rem;
+    font-size: 1.15rem;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.nav-link {
+    font-weight: 500;
+    color: var(--text-secondary) !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.nav-link:hover {
+    color: var(--text-primary) !important;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.nav-item.active .nav-link,
+.nav-link.active {
+    color: var(--text-primary) !important;
+    background-color: rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Premium Card Components */
+.card-premium {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-header {
+    background-color: rgba(31, 41, 55, 0.3) !important;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    padding: 1.2rem 1.5rem;
+}
+
+/* Stat Cards */
+.card-stat {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.4);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+.card-stat::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+.card-stat-total::after { background-color: var(--color-indigo); }
+.card-stat-assigned::after { background-color: var(--color-success); }
+.card-stat-available::after { background-color: var(--text-secondary); }
+.card-stat-service::after { background-color: var(--color-warning); }
+
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+}
+.bg-indigo-subtle { background-color: rgba(99, 102, 241, 0.1) !important; color: #818cf8 !important; }
+.bg-success-subtle { background-color: rgba(16, 185, 129, 0.1) !important; color: #34d399 !important; }
+.bg-secondary-subtle { background-color: rgba(156, 163, 175, 0.1) !important; color: #9ca3af !important; }
+.bg-warning-subtle { background-color: rgba(245, 158, 11, 0.1) !important; color: #fbbf24 !important; }
+
+/* Custom Text and Utility Classes */
+.text-indigo { color: #818cf8 !important; }
+.bg-indigo { background-color: var(--color-indigo) !important; }
+.bg-indigo-subtle { background-color: rgba(99, 102, 241, 0.1) !important; }
+.btn-indigo {
+    background: linear-gradient(135deg, var(--color-indigo), var(--color-indigo-hover));
+    border: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+.btn-indigo:hover {
+    background: linear-gradient(135deg, var(--color-indigo-hover), #4338ca);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    transform: translateY(-1px);
+}
+.btn-indigo:active {
+    transform: translateY(1px);
+}
+
+/* Premium Inputs and Selects */
+.form-control,
+.form-select {
+    background-color: rgba(17, 24, 39, 0.6) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease-in-out;
+}
+.form-control:focus,
+.form-select:focus {
+    background-color: rgba(17, 24, 39, 0.85) !important;
+    border-color: rgba(99, 102, 241, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+    outline: none;
+}
+.form-control::placeholder {
+    color: #4b5563 !important;
+}
+.form-control[readonly],
+.bg-dark-subtle {
+    background-color: rgba(31, 41, 55, 0.4) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    cursor: not-allowed;
+}
+
+/* Custom Search Input Group styling */
+.search-input-group {
+    border-radius: 10px;
+    overflow: hidden;
+}
+.search-input-group .input-group-text {
+    background-color: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+/* Premium Tables */
+.table-premium {
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    width: 100%;
+}
+.table-premium thead th {
+    background-color: transparent !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 0.75rem;
+}
+.table-premium tbody tr {
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.table-premium tbody td {
+    background-color: rgba(31, 41, 55, 0.15);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 1.1rem 0.75rem;
+}
+.table-premium tbody tr td:first-child {
+    border-left: 1px solid var(--border-color);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-left: 1.25rem;
+}
+.table-premium tbody tr td:last-child {
+    border-right: 1px solid var(--border-color);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding-right: 1.25rem;
+}
+.table-premium tbody tr:hover td {
+    background-color: rgba(31, 41, 55, 0.4) !important;
+    border-color: #374151;
+}
+
+/* Glowing Status Badges */
+.badge {
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.45rem 0.75rem;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+}
+.badge-assigned {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+}
+.badge-available {
+    background-color: rgba(156, 163, 175, 0.1) !important;
+    border-color: rgba(156, 163, 175, 0.2) !important;
+    color: #cbd5e1 !important;
+}
+.badge-service {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
+    color: #fbbf24 !important;
+}
+.badge-other {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+    color: #818cf8 !important;
+}
+
+/* Dynamic Live Pulsing Indicator */
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.92); }
+}
+
+/* Alert Boxes Styling override */
+.alert-success {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    color: #34d399 !important;
+}
+.alert-danger {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    color: #fca5a5 !important;
+}
+.alert-warning {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    color: #fcd34d !important;
+}
+.btn-close {
+    filter: invert(1) grayscale(1) brightness(2);
+}
