@@ -24,10 +24,7 @@
 
         <div class="input-group mb-4 search-input-group shadow-sm">
             <span class="input-group-text border-end-0"><i class="fas fa-search text-muted"></i></span>
-            <input
-                type="text"
-                id="historySearch"
-                class="form-control border-start-0 ps-0"
+            <input type="text" id="historySearch" class="form-control border-start-0 ps-0"
                 placeholder="Cari berdasarkan nama karyawan, Serial Number (SN), keterangan, laptop, divisi...">
         </div>
 

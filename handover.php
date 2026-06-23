@@ -77,7 +77,6 @@
                         </div>
                     </div>
 
-                    <!-- DIVISION -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-white-50"><i
                                 class="fas fa-sitemap me-2"></i>Division</label>
@@ -85,7 +84,6 @@
                     </div>
 
                     <div class="row">
-                        <!-- LAPTOP -->
                         <div class="col-md-6 mb-4">
                             <label class="form-label fw-semibold text-white-50"><i class="fas fa-laptop me-2"></i>Laptop
                                 Model</label>
@@ -93,7 +91,6 @@
                                 placeholder="Auto-filled">
                         </div>
 
-                        <!-- BRAND -->
                         <div class="col-md-6 mb-4">
                             <label class="form-label fw-semibold text-white-50"><i
                                     class="fas fa-industry me-2"></i>Brand</label>
@@ -102,7 +99,6 @@
                         </div>
                     </div>
 
-                    <!-- LAPTOP SPECIFICATIONS (FULL WIDTH & AUTO-HEIGHT) -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-white-50">
                             <i class="fas fa-microchip me-2"></i>
