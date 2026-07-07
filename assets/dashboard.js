@@ -1,22 +1,38 @@
 let allDevices = [];
+let currentFilter = 'all';
 let isLoading = false;
 let autoRefreshTimer = null;
-const refreshInterval = 20000; // 20 seconds
+const refreshInterval = 60000; // 60 seconds
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('deviceTable')) {
         // Initial load
         loadDevices();
-        
+
         // Setup Auto Refresh
         startAutoRefresh();
-        
+
         // Setup Search Filter
         const searchInput = document.getElementById('searchDevice');
         if (searchInput) {
             searchInput.addEventListener('input', filterDevicesTable);
         }
     }
+
+    document.querySelectorAll('.filter-card').forEach(card => {
+
+        card.addEventListener('click', function () {
+
+            currentFilter = this.dataset.filter;
+
+            applyCurrentFilter();
+
+            setActiveCard(this);
+
+        });
+
+    });
+
 });
 
 function startAutoRefresh() {
@@ -63,9 +79,9 @@ async function loadDevices(isSilent = false) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         let data = await response.json();
-        
+
         if (!Array.isArray(data)) {
             // If it's a single object, wrap it in array
             if (data && typeof data === 'object') {
@@ -87,6 +103,7 @@ async function loadDevices(isSilent = false) {
         // Render Table & Cards
         renderDevicesTable(allDevices);
         updateStatistics(allDevices);
+        applyCurrentFilter();
 
     } catch (err) {
         console.error('Failed to load devices:', err);
@@ -130,9 +147,9 @@ function renderDevicesTable(devices) {
     }
 
     let html = '';
-    devices.forEach(item => {
+    devices.forEach((item, index) => {
         html += `
-            <tr class="device-row">
+            <tr class="device-row" data-index="${allDevices.indexOf(item)}" style="cursor:pointer;">
                 <td class="fw-medium font-monospace">${escapeHTML(item.SN ?? '-')}</td>
                 <td>${escapeHTML(item.listing ?? '-')}</td>
                 <td>${escapeHTML(item.laptop ?? '-')}</td>
@@ -145,25 +162,29 @@ function renderDevicesTable(devices) {
     table.innerHTML = html;
 }
 
+// function filterDevicesTable() {
+//     const query = document.getElementById('searchDevice').value.toLowerCase().trim();
+//     if (!query) {
+//         renderDevicesTable(allDevices);
+//         return;
+//     }
+
+//     const filtered = allDevices.filter(item => {
+//         return (
+//             (item.SN && item.SN.toLowerCase().includes(query)) ||
+//             (item.listing && String(item.listing).toLowerCase().includes(query)) ||
+//             (item.laptop && item.laptop.toLowerCase().includes(query)) ||
+//             (item.name && item.name.toLowerCase().includes(query)) ||
+//             (item.division && item.division.toLowerCase().includes(query)) ||
+//             (item.status && item.status.toLowerCase().includes(query))
+//         );
+//     });
+
+//     renderDevicesTable(filtered);
+// }
+
 function filterDevicesTable() {
-    const query = document.getElementById('searchDevice').value.toLowerCase().trim();
-    if (!query) {
-        renderDevicesTable(allDevices);
-        return;
-    }
-
-    const filtered = allDevices.filter(item => {
-        return (
-            (item.SN && item.SN.toLowerCase().includes(query)) ||
-            (item.listing && String(item.listing).toLowerCase().includes(query)) ||
-            (item.laptop && item.laptop.toLowerCase().includes(query)) ||
-            (item.name && item.name.toLowerCase().includes(query)) ||
-            (item.division && item.division.toLowerCase().includes(query)) ||
-            (item.status && item.status.toLowerCase().includes(query))
-        );
-    });
-
-    renderDevicesTable(filtered);
+    applyCurrentFilter();
 }
 
 function updateStatistics(devices) {
@@ -212,4 +233,82 @@ function escapeHTML(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+}
+
+document.addEventListener('click', function (e) {
+
+    const row = e.target.closest('.device-row');
+    if (!row) return;
+
+    const device = allDevices[row.dataset.index];
+
+    if (!device) return;
+
+    showDeviceDetail(device);
+
+});
+
+function showDeviceDetail(device) {
+
+    document.getElementById('detailSN').textContent = device.SN || '-';
+    document.getElementById('detailNoList').textContent = device.listing || '-';
+    document.getElementById('detailBrand').textContent = device.brand || '-';
+    document.getElementById('detailLaptop').textContent = device.laptop || '-';
+
+    document.getElementById('detailName').textContent = device.name || '-';
+    document.getElementById('detailDivision').textContent = device.division || '-';
+
+    document.getElementById('detailStatus').innerHTML =
+        badgeStatus(device.status);
+
+    document.getElementById('detailSpec').textContent =
+        device.spesifikasi || '-';
+
+    const modal = new bootstrap.Modal(
+        document.getElementById('deviceDetailModal')
+    );
+
+    modal.show();
+}
+
+function applyCurrentFilter() {
+
+    const keyword = document.getElementById('searchDevice')
+        .value
+        .toLowerCase()
+        .trim();
+
+    let devices = [...allDevices];
+
+    // Filter Status
+    if (currentFilter !== 'all') {
+        devices = devices.filter(d =>
+            String(d.status).toLowerCase() === currentFilter
+        );
+    }
+
+    // Filter Search
+    if (keyword) {
+        devices = devices.filter(item =>
+            (item.SN && item.SN.toLowerCase().includes(keyword)) ||
+            (item.listing && String(item.listing).toLowerCase().includes(keyword)) ||
+            (item.laptop && item.laptop.toLowerCase().includes(keyword)) ||
+            (item.name && item.name.toLowerCase().includes(keyword)) ||
+            (item.division && item.division.toLowerCase().includes(keyword)) ||
+            (item.status && item.status.toLowerCase().includes(keyword))
+        );
+    }
+
+    renderDevicesTable(devices);
+
+}
+
+function setActiveCard(activeCard){
+
+    document.querySelectorAll('.filter-card').forEach(card=>{
+        card.classList.remove('active');
+    });
+
+    activeCard.classList.add('active');
+
 }

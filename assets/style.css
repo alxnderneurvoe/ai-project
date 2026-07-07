@@ -323,3 +323,17 @@ body {
 .btn-close {
     filter: invert(1) grayscale(1) brightness(2);
 }
+
+.filter-card{
+    cursor:pointer;
+    transition:.25s;
+}
+
+.filter-card:hover{
+    transform:translateY(-4px);
+}
+
+.filter-card.active{
+    border:2px solid #6366f1;
+    box-shadow:0 0 18px rgba(99,102,241,.45);
+}

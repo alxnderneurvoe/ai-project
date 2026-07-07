@@ -18,6 +18,11 @@ if (empty($keterangan) || empty($name) || empty($sn)) {
         'message' => 'Mandatory fields are missing. Please provide Keterangan, Nama, and Serial Number.'
     ]);
     exit;
+} else {
+    $keterangan = $_POST['keterangan'];
+    $name = $_POST['name'];
+    $sn = $_POST['sn'];
+    $division = $_POST['division'];
 }
 
 
