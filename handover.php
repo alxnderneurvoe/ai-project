@@ -1,4 +1,7 @@
-<?php include 'templates/header.php'; ?>
+<?php
+require 'auth.php';
+include 'templates/header.php';
+?>
 
 <div class="row justify-content-center">
     <div class="col-lg-7">

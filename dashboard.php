@@ -1,4 +1,7 @@
-<?php include 'templates/header.php'; ?>
+<?php
+require 'auth.php';
+include 'templates/header.php';
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold text-white mb-0">
