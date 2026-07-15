@@ -25,7 +25,14 @@ $payload = [
     'name' => trim($input['name'] ?? ''),
     'division' => trim($input['division'] ?? ''),
     'status' => trim($input['status'] ?? ''),
+    'Type' => trim($input['Type'] ?? ''),
+    'brand' => trim($input['brand'] ?? ''),
+    'cpu' => trim($input['cpu'] ?? ''),
+    'ram' => trim($input['ram'] ?? ''),
+    'storage' => trim($input['storage'] ?? ''),
     'spesifikasi' => trim($input['spesifikasi'] ?? ''),
+
+
 ];
 
 if ($payload['SN'] === '') {

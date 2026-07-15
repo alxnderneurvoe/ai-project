@@ -3,6 +3,9 @@ let currentFilter = 'all';
 let isLoading = false;
 let autoRefreshTimer = null;
 let deviceModalInstance = null;
+let deleteConfirmModalInstance = null;
+let deleteTargetDevice = null;
+let deleteTargetRow = null;
 const refreshInterval = 60000; // 60 seconds
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         initDeviceModal();
+        initDeleteConfirmModal();
 
         const deviceForm = document.getElementById('deviceForm');
         if (deviceForm) {
@@ -52,6 +56,7 @@ async function loadDevices(isSilent = false) {
     if (isLoading) return;
     isLoading = true;
 
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     const table = document.getElementById('deviceTable');
     if (!table) return;
 
@@ -133,6 +138,7 @@ async function loadDevices(isSilent = false) {
         if (indicator) {
             indicator.classList.remove('fa-spin');
         }
+        window.scrollTo({ top: scrollPosition, behavior: 'auto' });
     }
 }
 
@@ -273,8 +279,12 @@ function showDeviceDetail(device) {
 
     document.getElementById('detailSN').textContent = device.SN || '-';
     document.getElementById('detailNoList').textContent = device.listing || '-';
+    document.getElementById('detailType').textContent = device.Type || device.type || '-';
     document.getElementById('detailBrand').textContent = device.brand || '-';
     document.getElementById('detailLaptop').textContent = device.laptop || '-';
+    document.getElementById('detailCPU').textContent = device.cpu || '-';
+    document.getElementById('detailRAM').textContent = device.ram || '-';
+    document.getElementById('detailStorage').textContent = device.storage || '-';
 
     document.getElementById('detailName').textContent = device.name || '-';
     document.getElementById('detailDivision').textContent = device.division || '-';
@@ -343,19 +353,52 @@ function initDeviceModal() {
     });
 }
 
+function initDeleteConfirmModal() {
+    const modalEl = document.getElementById('deleteConfirmModal');
+    if (!modalEl) return;
+    deleteConfirmModalInstance = new bootstrap.Modal(modalEl, {
+        backdrop: 'static',
+        keyboard: false,
+    });
+
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', performDeleteDevice);
+    }
+}
+
 function openEditDeviceModal(device) {
     const modalTitle = document.getElementById('deviceModalTitle');
     const saveBtn = document.getElementById('saveDeviceBtn');
     const deleteBtn = document.getElementById('deleteDeviceBtn');
 
-    document.getElementById('deviceId').value = device.SN || '';
-    document.getElementById('deviceSN').value = device.SN || '';
-    document.getElementById('deviceListing').value = device.listing || '';
-    document.getElementById('deviceLaptop').value = device.laptop || '';
-    document.getElementById('deviceName').value = device.name || '';
-    document.getElementById('deviceDivision').value = device.division || '';
-    document.getElementById('deviceStatus').value = device.status || 'Available';
-    document.getElementById('deviceSpesifikasi').value = device.spesifikasi || '';
+    const setValue = (id, value) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        element.value = value;
+    };
+
+    setValue('deviceId', device.SN || '');
+    setValue('deviceSN', device.SN || '');
+    setValue('deviceListing', device.listing || '');
+    setValue('deviceType', device.Type || device.type || '');
+    setValue('deviceLaptop', device.laptop || '');
+    setValue('deviceBrand', device.brand || '');
+    setValue('deviceCPU', device.cpu || '');
+    setValue('deviceName', device.name || '');
+    setValue('deviceDivision', device.division || '');
+    setValue('deviceStatus', device.status || 'Available');
+    setValue('deviceRAM', device.ram || '');
+    setValue('deviceStorage', device.storage || '');
+    setValue('deviceSpesifikasi', device.spesifikasi || '');
+
+    const readonlyFields = ['deviceSN', 'deviceListing', 'deviceName', 'deviceDivision', 'deviceStatus'];
+    readonlyFields.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) field.readOnly = true;
+    });
+    const statusField = document.getElementById('deviceStatus');
+    if (statusField) statusField.disabled = true;
 
     if (modalTitle) modalTitle.innerHTML = '<i class="fas fa-edit me-2 text-warning"></i>Update Device';
     if (saveBtn) saveBtn.textContent = 'Update';
@@ -370,10 +413,15 @@ function handleDeviceFormSubmit(event) {
     const payload = {
         SN: document.getElementById('deviceSN').value.trim(),
         listing: document.getElementById('deviceListing').value.trim(),
+        Type: document.getElementById('deviceType').value.trim(),
         laptop: document.getElementById('deviceLaptop').value.trim(),
+        brand: document.getElementById('deviceBrand').value.trim(),
+        cpu: document.getElementById('deviceCPU').value.trim(),
         name: document.getElementById('deviceName').value.trim(),
         division: document.getElementById('deviceDivision').value.trim(),
         status: document.getElementById('deviceStatus').value.trim(),
+        ram: document.getElementById('deviceRAM').value.trim(),
+        storage: document.getElementById('deviceStorage').value.trim(),
         spesifikasi: document.getElementById('deviceSpesifikasi').value.trim(),
     };
 
@@ -417,23 +465,62 @@ function handleDeleteDeviceClick(event) {
     event.preventDefault();
     const deviceId = document.getElementById('deviceId').value.trim();
     if (!deviceId) {
-        alert('Tidak ada device yang dipilih untuk dihapus.');
         return;
     }
     const device = allDevices.find(item => String(item.SN) === deviceId);
     if (device) {
-        confirmDeleteDevice(device);
+        openDeleteConfirmModal(device, null);
     }
 }
 
+function openDeleteConfirmModal(device, rowElement) {
+    deleteTargetDevice = device;
+    deleteTargetRow = rowElement || null;
+
+    const message = document.getElementById('deleteConfirmMessage');
+    const successElement = document.getElementById('deleteConfirmSuccess');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+    if (message) {
+        message.textContent = `Hapus device dengan SN ${device.SN}?`;
+        message.classList.remove('d-none');
+    }
+    if (successElement) {
+        successElement.classList.add('d-none');
+        successElement.classList.remove('show');
+    }
+    if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Hapus';
+    }
+
+    deleteConfirmModalInstance?.show();
+}
+
 function confirmDeleteDevice(device) {
-    const confirmed = window.confirm(`Hapus device dengan SN ${device.SN} ?`);
-    if (!confirmed) return;
+    openDeleteConfirmModal(device, null);
+}
+
+function performDeleteDevice() {
+    if (!deleteTargetDevice) return;
+
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Menghapus...';
+    }
+
+    const row = deleteTargetRow || document.querySelector(`.device-row[data-index="${allDevices.indexOf(deleteTargetDevice)}"]`);
+    if (row) {
+        row.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        row.style.opacity = '0.4';
+        row.style.transform = 'translateX(10px)';
+    }
 
     fetch('api/delete-device.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ SN: device.SN }),
+        body: JSON.stringify({ SN: deleteTargetDevice.SN }),
     })
         .then(async response => {
             const result = await response.json();
@@ -443,12 +530,52 @@ function confirmDeleteDevice(device) {
             return result;
         })
         .then(() => {
-            deviceModalInstance?.hide();
-            loadDevices();
+            const successElement = document.getElementById('deleteConfirmSuccess');
+            const messageElement = document.getElementById('deleteConfirmMessage');
+            if (messageElement) {
+                messageElement.classList.add('d-none');
+            }
+            if (successElement) {
+                successElement.classList.remove('d-none');
+                requestAnimationFrame(() => {
+                    successElement.classList.add('show');
+                });
+            }
+            if (row) {
+                row.style.opacity = '0.2';
+                row.style.transform = 'translateX(10px)';
+            }
+            setTimeout(() => {
+                if (row) {
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+                }
+            }, 3000);
+            setTimeout(() => {
+                deleteConfirmModalInstance?.hide();
+                if (row && row.parentNode) row.parentNode.removeChild(row);
+                loadDevices();
+            }, 3000);
         })
         .catch(error => {
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Hapus';
+            }
+            if (row) {
+                row.style.opacity = '1';
+                row.style.transform = 'none';
+            }
             alert('Delete gagal: ' + error.message);
             console.error(error);
+        })
+        .finally(() => {
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Hapus';
+            }
+            deleteTargetDevice = null;
+            deleteTargetRow = null;
         });
 }
 
