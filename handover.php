@@ -1,5 +1,6 @@
 <?php
 require 'auth.php';
+require_role(['admin', 'user']);
 include 'templates/header.php';
 ?>
 
@@ -122,13 +123,13 @@ include 'templates/header.php';
     </div>
 </div>
 
- * Load order in HTML:
+ <!-- * Load order in HTML:
  *   1. ui.js
  *   2. devices.js
  *   3. populate.js
  *   4. form.js
  *   5. submit.js
- *   6. main.js   ← this file (last)
+ *   6. main.js   ← this file (last) -->
 
 <script src="assets/files/ui.js"></script>
 <script src="assets/files/devices.js"></script>

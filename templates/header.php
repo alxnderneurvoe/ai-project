@@ -25,7 +25,7 @@
         <div class="container">
 
             <a class="navbar-brand" href="dashboard.php">
-                Device Handover
+                IT Asset Management
             </a>
 
             <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -42,11 +42,21 @@
                         </a>
                     </li>
 
+<?php if (current_user_role() === 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="add-device.php">
+                            Add Device
+                        </a>
+                    </li>
+<?php endif; ?>
+
+<?php if (current_user_role() !== 'viewer'): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="handover.php">
                             Handover
                         </a>
                     </li>
+<?php endif; ?>
 
                     <li class="nav-item">
                         <a class="nav-link" href="history.php">

@@ -2,6 +2,7 @@ let allDevices = [];
 let currentFilter = 'all';
 let isLoading = false;
 let autoRefreshTimer = null;
+let deviceModalInstance = null;
 const refreshInterval = 60000; // 60 seconds
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,22 +18,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) {
             searchInput.addEventListener('input', filterDevicesTable);
         }
+
+        initDeviceModal();
+
+        const deviceForm = document.getElementById('deviceForm');
+        if (deviceForm) {
+            deviceForm.addEventListener('submit', handleDeviceFormSubmit);
+        }
+
+        const deleteDeviceBtn = document.getElementById('deleteDeviceBtn');
+        if (deleteDeviceBtn) {
+            deleteDeviceBtn.addEventListener('click', handleDeleteDeviceClick);
+        }
     }
 
     document.querySelectorAll('.filter-card').forEach(card => {
-
         card.addEventListener('click', function () {
-
             currentFilter = this.dataset.filter;
-
             applyCurrentFilter();
-
             setActiveCard(this);
-
         });
-
     });
-
 });
 
 function startAutoRefresh() {
@@ -134,10 +140,13 @@ function renderDevicesTable(devices) {
     const table = document.getElementById('deviceTable');
     if (!table) return;
 
+    const isAdmin = window.CURRENT_USER_ROLE === 'admin';
+    const columnCount = isAdmin ? 7 : 6;
+
     if (devices.length === 0) {
         table.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center py-4 text-muted">
+                <td colspan="${columnCount}" class="text-center py-4 text-muted">
                     <i class="fas fa-folder-open fa-2x mb-2"></i>
                     <div>Tidak ada data device yang ditemukan.</div>
                 </td>
@@ -147,41 +156,31 @@ function renderDevicesTable(devices) {
     }
 
     let html = '';
-    devices.forEach((item, index) => {
+    devices.forEach((item) => {
+        const index = allDevices.indexOf(item);
         html += `
-            <tr class="device-row" data-index="${allDevices.indexOf(item)}" style="cursor:pointer;">
+            <tr class="device-row" data-index="${index}" style="cursor:pointer;">
                 <td class="fw-medium font-monospace">${escapeHTML(item.SN ?? '-')}</td>
                 <td>${escapeHTML(item.listing ?? '-')}</td>
                 <td>${escapeHTML(item.laptop ?? '-')}</td>
                 <td>${escapeHTML(item.name ?? '-')}</td>
                 <td>${escapeHTML(item.division ?? '-')}</td>
                 <td>${badgeStatus(item.status)}</td>
+                ${isAdmin ? `
+                    <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-outline-warning action-btn action-edit mb-1" title="Edit Device">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger action-btn action-delete ms-2" title="Delete Device">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                ` : ''}
             </tr>
         `;
     });
     table.innerHTML = html;
 }
-
-// function filterDevicesTable() {
-//     const query = document.getElementById('searchDevice').value.toLowerCase().trim();
-//     if (!query) {
-//         renderDevicesTable(allDevices);
-//         return;
-//     }
-
-//     const filtered = allDevices.filter(item => {
-//         return (
-//             (item.SN && item.SN.toLowerCase().includes(query)) ||
-//             (item.listing && String(item.listing).toLowerCase().includes(query)) ||
-//             (item.laptop && item.laptop.toLowerCase().includes(query)) ||
-//             (item.name && item.name.toLowerCase().includes(query)) ||
-//             (item.division && item.division.toLowerCase().includes(query)) ||
-//             (item.status && item.status.toLowerCase().includes(query))
-//         );
-//     });
-
-//     renderDevicesTable(filtered);
-// }
 
 function filterDevicesTable() {
     applyCurrentFilter();
@@ -236,16 +235,38 @@ function escapeHTML(str) {
 }
 
 document.addEventListener('click', function (e) {
+    const editBtn = e.target.closest('.action-edit');
+    if (editBtn) {
+        e.stopPropagation();
+        const row = editBtn.closest('.device-row');
+        if (!row) return;
+        const device = allDevices[row.dataset.index];
+        if (!device) return;
+        openEditDeviceModal(device);
+        return;
+    }
+
+    const deleteBtn = e.target.closest('.action-delete');
+    if (deleteBtn) {
+        e.stopPropagation();
+        const row = deleteBtn.closest('.device-row');
+        if (!row) return;
+        const device = allDevices[row.dataset.index];
+        if (!device) return;
+        confirmDeleteDevice(device);
+        return;
+    }
 
     const row = e.target.closest('.device-row');
     if (!row) return;
+    if (e.target.closest('.action-btn')) {
+        return;
+    }
 
     const device = allDevices[row.dataset.index];
-
     if (!device) return;
 
     showDeviceDetail(device);
-
 });
 
 function showDeviceDetail(device) {
@@ -311,4 +332,132 @@ function setActiveCard(activeCard){
 
     activeCard.classList.add('active');
 
+}
+
+function initDeviceModal() {
+    const modalEl = document.getElementById('deviceModal');
+    if (!modalEl) return;
+    deviceModalInstance = new bootstrap.Modal(modalEl, {
+        backdrop: 'static',
+        keyboard: false,
+    });
+}
+
+function openEditDeviceModal(device) {
+    const modalTitle = document.getElementById('deviceModalTitle');
+    const saveBtn = document.getElementById('saveDeviceBtn');
+    const deleteBtn = document.getElementById('deleteDeviceBtn');
+
+    document.getElementById('deviceId').value = device.SN || '';
+    document.getElementById('deviceSN').value = device.SN || '';
+    document.getElementById('deviceListing').value = device.listing || '';
+    document.getElementById('deviceLaptop').value = device.laptop || '';
+    document.getElementById('deviceName').value = device.name || '';
+    document.getElementById('deviceDivision').value = device.division || '';
+    document.getElementById('deviceStatus').value = device.status || 'Available';
+    document.getElementById('deviceSpesifikasi').value = device.spesifikasi || '';
+
+    if (modalTitle) modalTitle.innerHTML = '<i class="fas fa-edit me-2 text-warning"></i>Update Device';
+    if (saveBtn) saveBtn.textContent = 'Update';
+    if (deleteBtn) deleteBtn.classList.remove('d-none');
+
+    deviceModalInstance?.show();
+}
+
+function handleDeviceFormSubmit(event) {
+    event.preventDefault();
+    const deviceId = document.getElementById('deviceId').value.trim();
+    const payload = {
+        SN: document.getElementById('deviceSN').value.trim(),
+        listing: document.getElementById('deviceListing').value.trim(),
+        laptop: document.getElementById('deviceLaptop').value.trim(),
+        name: document.getElementById('deviceName').value.trim(),
+        division: document.getElementById('deviceDivision').value.trim(),
+        status: document.getElementById('deviceStatus').value.trim(),
+        spesifikasi: document.getElementById('deviceSpesifikasi').value.trim(),
+    };
+
+    if (!deviceId) {
+        alert('Tidak ada device yang dipilih untuk diperbarui.');
+        return;
+    }
+
+    const saveBtn = document.getElementById('saveDeviceBtn');
+    saveBtn.disabled = true;
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin me-2"></i>Sedang menyimpan...';
+
+    fetch('api/update-device.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    })
+        .then(async response => {
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Gagal menyimpan perubahan');
+            }
+            return result;
+        })
+        .then(() => {
+            deviceModalInstance?.hide();
+            loadDevices();
+        })
+        .catch(error => {
+            alert('Update gagal: ' + error.message);
+            console.error(error);
+        })
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+        });
+}
+
+function handleDeleteDeviceClick(event) {
+    event.preventDefault();
+    const deviceId = document.getElementById('deviceId').value.trim();
+    if (!deviceId) {
+        alert('Tidak ada device yang dipilih untuk dihapus.');
+        return;
+    }
+    const device = allDevices.find(item => String(item.SN) === deviceId);
+    if (device) {
+        confirmDeleteDevice(device);
+    }
+}
+
+function confirmDeleteDevice(device) {
+    const confirmed = window.confirm(`Hapus device dengan SN ${device.SN} ?`);
+    if (!confirmed) return;
+
+    fetch('api/delete-device.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ SN: device.SN }),
+    })
+        .then(async response => {
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Gagal menghapus device');
+            }
+            return result;
+        })
+        .then(() => {
+            deviceModalInstance?.hide();
+            loadDevices();
+        })
+        .catch(error => {
+            alert('Delete gagal: ' + error.message);
+            console.error(error);
+        });
+}
+
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }

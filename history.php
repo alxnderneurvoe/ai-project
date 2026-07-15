@@ -1,5 +1,6 @@
 <?php
 require 'auth.php';
+require_role(['admin', 'user', 'viewer']);
 include 'templates/header.php';
 ?>
 

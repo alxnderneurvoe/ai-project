@@ -1,33 +1,37 @@
 <?php
 session_start();
+require_once __DIR__ . '/config/db.php';
 
 if (isset($_SESSION['login'])) {
-    header("Location: dashboard.php");
+    header('Location: dashboard.php');
     exit;
 }
 
-$error = "";
+$error = '';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // Ganti sesuai kebutuhan
-    if ($username == "admin" && $password == "admin123") {
-
-        $_SESSION['login'] = true;
-        $_SESSION['username'] = $username;
-
-        header("Location: dashboard.php");
-        exit;
-
+    if ($username === '' || $password === '') {
+        $error = 'Username dan Password wajib diisi.';
     } else {
+        $user = find_user_by_username($username);
 
-        $error = "Username atau Password salah.";
+        if ($user && password_verify($password, $user['password_hash'])) {
+            session_regenerate_id(true);
+            $_SESSION['login'] = true;
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $username;
+            $_SESSION['user_role'] = $user['role'] ?? 'user';
+            $_SESSION['user_full_name'] = $user['full_name'] ?? '';
 
+            header('Location: dashboard.php');
+            exit;
+        }
+
+        $error = 'Username atau Password salah.';
     }
-
 }
 ?>
 

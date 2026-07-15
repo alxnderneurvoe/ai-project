@@ -1,7 +1,13 @@
 <?php
 require 'auth.php';
+require_role(['admin', 'user', 'viewer']);
+$currentRole = current_user_role();
 include 'templates/header.php';
 ?>
+
+<script>
+    window.CURRENT_USER_ROLE = <?php echo json_encode($currentRole, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+</script>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold text-white mb-0">
@@ -110,6 +116,9 @@ include 'templates/header.php';
                         <th>Name</th>
                         <th>Division</th>
                         <th class="pe-3">Status</th>
+                        <?php if ($currentRole === 'admin'): ?>
+                            <th class="pe-3">Actions</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
 
@@ -227,6 +236,64 @@ include 'templates/header.php';
                 </button>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deviceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="deviceModalTitle">
+                    <i class="fas fa-plus me-2 text-primary"></i>
+                    Tambah Device
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="deviceForm">
+                <div class="modal-body">
+                    <input type="hidden" id="deviceId" value="">
+                    <div class="row gy-3">
+                        <div class="col-md-4">
+                            <label class="form-label text-white-50">Serial Number (SN)</label>
+                            <input type="text" id="deviceSN" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white-50">No List</label>
+                            <input type="text" id="deviceListing" class="form-control form-control-lg">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-white-50">Laptop Model</label>
+                            <input type="text" id="deviceLaptop" class="form-control form-control-lg">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50">Name</label>
+                            <input type="text" id="deviceName" class="form-control form-control-lg">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50">Division</label>
+                            <input type="text" id="deviceDivision" class="form-control form-control-lg">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50">Status</label>
+                            <select id="deviceStatus" class="form-select form-select-lg">
+                                <option value="Available">Available</option>
+                                <option value="Assigned">Assigned</option>
+                                <option value="Service">Service</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white-50">Spesifikasi</label>
+                            <input type="text" id="deviceSpesifikasi" class="form-control form-control-lg">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="deleteDeviceBtn" class="btn btn-danger d-none">Delete</button>
+                    <button type="submit" class="btn btn-primary" id="saveDeviceBtn">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
