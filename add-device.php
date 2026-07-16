@@ -95,6 +95,6 @@ include 'templates/header.php';
     </div>
 </div>
 
-<script src="assets/add-device.js"></script>
+<script src="assets/add-device/add-device.js"></script>
 
 <?php include 'templates/footer.php';

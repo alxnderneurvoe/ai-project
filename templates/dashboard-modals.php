@@ -1,67 +1,3 @@
-<?php
-require 'auth.php';
-require_role(['admin', 'user', 'viewer']);
-$currentRole = current_user_role();
-include 'templates/header.php';
-?>
-
-<script>
-    window.CURRENT_USER_ROLE = <?php echo json_encode($currentRole, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-</script>
-
-<?php include 'templates/dashboard-stats.php'; ?>
-
-<?php include 'templates/dashboard-table.php'; ?>
-
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border-secondary text-white">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle me-2 text-danger"></i>
-                    Konfirmasi Hapus Device
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="deleteConfirmMessage" class="mb-0">Apakah Anda yakin ingin menghapus device ini?</p>
-                <div id="deleteConfirmSuccess" class="text-center d-none mt-4">
-                    <div class="delete-check-icon mb-3">
-                        <i class="fas fa-check-circle fa-4x text-success"></i>
-                    </div>
-                    <p class="mb-0 fw-semibold">Berhasil dihapus!</p>
-                </div>
-            </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Hapus</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border-secondary text-white">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title">
-                    <i class="fas fa-edit me-2 text-warning"></i>
-                    Konfirmasi Update Device
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="updateConfirmMessage" class="mb-2">Apakah Anda yakin ingin memperbarui device ini?</p>
-                <p class="small text-muted">Perubahan akan diproses melalui n8n.</p>
-            </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" id="confirmUpdateBtn" class="btn btn-warning">Perbarui</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Device Detail Modal -->
 <div class="modal fade" id="deviceDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -156,8 +92,7 @@ include 'templates/header.php';
                         </h6>
                         <div class="card bg-secondary bg-opacity-10 border-secondary">
                             <div class="card-body">
-                                <pre id="detailSpec" class="mb-0 text-white"
-                                    style="white-space:pre-wrap;font-family:inherit;"></pre>
+                                <pre id="detailSpec" class="mb-0 text-white" style="white-space:pre-wrap;font-family:inherit;"></pre>
                             </div>
                         </div>
                     </div>
@@ -172,7 +107,32 @@ include 'templates/header.php';
     </div>
 </div>
 
-
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2 text-danger"></i>
+                    Konfirmasi Hapus Device
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmMessage" class="mb-0">Apakah Anda yakin ingin menghapus device ini?</p>
+                <div id="deleteConfirmSuccess" class="text-center d-none mt-4">
+                    <div class="delete-check-icon mb-3">
+                        <i class="fas fa-check-circle fa-4x text-success"></i>
+                    </div>
+                    <p class="mb-0 fw-semibold">Berhasil dihapus!</p>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     @keyframes deleteCheckPop {
@@ -205,6 +165,7 @@ include 'templates/header.php';
         animation: deleteCheckPop 0.45s ease-out;
     }
 </style>
+
 <div class="modal fade" id="deviceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content bg-dark border-secondary text-white">
@@ -213,8 +174,7 @@ include 'templates/header.php';
                     <i class="fas fa-plus me-2 text-primary"></i>
                     Tambah Device
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="deviceForm">
                 <div class="modal-body">
@@ -301,14 +261,6 @@ include 'templates/header.php';
                         <div class="col-md-12">
                             <label class="form-label text-white-50">Spesifikasi</label>
                             <textarea id="deviceSpesifikasi" class="form-control form-control-lg" rows="3"></textarea>
-                        </div>
-                    </div>
-
-                    <div id="updateProcessing" class="alert alert-info d-none d-flex align-items-center gap-2 mt-4" role="status">
-                        <i class="fas fa-circle-notch fa-spin"></i>
-                        <div>
-                            <strong>Proses update</strong>
-                            <div class="small text-muted">Jangan tutup jendela ini sampai proses selesai.</div>
                         </div>
                     </div>
                 </div>

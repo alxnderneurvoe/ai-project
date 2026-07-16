@@ -59,5 +59,5 @@ include 'templates/header.php';
 
 </div>
 
-<script src="assets/history.js"></script>
+<script type="module" src="assets/history-device/index.js"></script>
 <?php include 'templates/footer.php'; ?>

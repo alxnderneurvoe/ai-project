@@ -123,19 +123,11 @@ include 'templates/header.php';
     </div>
 </div>
 
- <!-- * Load order in HTML:
- *   1. ui.js
- *   2. devices.js
- *   3. populate.js
- *   4. form.js
- *   5. submit.js
- *   6. main.js   ← this file (last) -->
-
-<script src="assets/files/ui.js"></script>
-<script src="assets/files/devices.js"></script>
-<script src="assets/files/populate.js"></script>
-<script src="assets/files/form.js"></script>
-<script src="assets/files/submit.js"></script>
-<script src="assets/files/main.js"></script>
+<script src="assets/handover/ui.js"></script>
+<script src="assets/handover/devices.js"></script>
+<script src="assets/handover/populate.js"></script>
+<script src="assets/handover/form.js"></script>
+<script src="assets/handover/submit.js"></script>
+<script src="assets/handover/main.js"></script>
 <!-- <script src="assets/handover.js"></script> -->
 <?php include 'templates/footer.php'; ?>
