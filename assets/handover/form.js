@@ -12,29 +12,29 @@ function handleKeteranganChange() {
     const jenis = document.getElementById('keterangan').value;
     clearForm();
 
-    const nameInputContainer    = document.getElementById('nameInputContainer');
-    const nameSelectContainer   = document.getElementById('nameSelectContainer');
+    const nameInputContainer = document.getElementById('nameInputContainer');
+    const nameSelectContainer = document.getElementById('nameSelectContainer');
     const nameReadonlyContainer = document.getElementById('nameReadonlyContainer');
-    const snSelectContainer     = document.getElementById('snSelectContainer');
-    const snInputContainer      = document.getElementById('snInputContainer');
-    const divisionInput         = document.getElementById('division');
+    const snSelectContainer = document.getElementById('snSelectContainer');
+    const snInputContainer = document.getElementById('snInputContainer');
+    const divisionInput = document.getElementById('division');
 
     // Hide all conditional containers first
     [nameInputContainer, nameSelectContainer, nameReadonlyContainer, snSelectContainer, snInputContainer]
         .forEach(el => { if (el) el.classList.add('d-none'); });
 
     // Remove required from all conditional fields
-    const nameInput    = document.getElementById('nameInput');
-    const nameSelect   = document.getElementById('nameSelect');
+    const nameInput = document.getElementById('nameInput');
+    const nameSelect = document.getElementById('nameSelect');
     const nameReadonly = document.getElementById('nameReadonly');
-    const snSelect     = document.getElementById('snSelect');
-    const snInput      = document.getElementById('snInput');
+    const snSelect = document.getElementById('snSelect');
+    const snInput = document.getElementById('snInput');
 
-    if (nameInput)    nameInput.required    = false;
-    if (nameSelect)   nameSelect.required   = false;
+    if (nameInput) nameInput.required = false;
+    if (nameSelect) nameSelect.required = false;
     if (nameReadonly) nameReadonly.required = false;
-    if (snSelect)     snSelect.required     = false;
-    if (snInput)      snInput.required      = false;
+    if (snSelect) snSelect.required = false;
+    if (snInput) snInput.required = false;
 
     if (!jenis) return;
 
@@ -117,10 +117,10 @@ function handleNameSelectChange() {
 
     const option = nameSelect.options[nameSelect.selectedIndex];
 
-    document.getElementById('snInput').value    = option.dataset.sn       || '';
-    document.getElementById('division').value   = option.dataset.division  || '';
-    document.getElementById('laptop').value     = option.dataset.laptop    || '';
-    document.getElementById('brand').value      = option.dataset.brand     || '';
+    document.getElementById('snInput').value = option.dataset.sn || '';
+    document.getElementById('division').value = option.dataset.division || '';
+    document.getElementById('laptop').value = option.dataset.laptop || '';
+    document.getElementById('brand').value = option.dataset.brand || '';
 
     const spesifikasiEl = document.getElementById('spesifikasi');
     if (spesifikasiEl) {
@@ -141,10 +141,10 @@ function handleSnSelectChange() {
     }
 
     const option = snSelect.options[snSelect.selectedIndex];
-    const jenis  = document.getElementById('keterangan').value;
+    const jenis = document.getElementById('keterangan').value;
 
     document.getElementById('laptop').value = option.dataset.laptop || '';
-    document.getElementById('brand').value  = option.dataset.brand  || '';
+    document.getElementById('brand').value = option.dataset.brand || '';
 
     const spesifikasiEl = document.getElementById('spesifikasi');
     if (spesifikasiEl) {
@@ -153,8 +153,8 @@ function handleSnSelectChange() {
     }
 
     if (jenis === 'Done Service') {
-        document.getElementById('nameReadonly').value = option.dataset.name     || '';
-        document.getElementById('division').value     = option.dataset.division || '';
+        document.getElementById('nameReadonly').value = option.dataset.name || '';
+        document.getElementById('division').value = option.dataset.division || '';
     }
 }
 
@@ -165,17 +165,17 @@ function clearForm() {
     const alert = document.getElementById('formAlert');
     if (alert) alert.remove();
 
-    const nameInput    = document.getElementById('nameInput');
-    const nameSelect   = document.getElementById('nameSelect');
+    const nameInput = document.getElementById('nameInput');
+    const nameSelect = document.getElementById('nameSelect');
     const nameReadonly = document.getElementById('nameReadonly');
-    const snSelect     = document.getElementById('snSelect');
-    const snInput      = document.getElementById('snInput');
+    const snSelect = document.getElementById('snSelect');
+    const snInput = document.getElementById('snInput');
 
-    if (nameInput)    nameInput.value       = '';
-    if (nameSelect)   nameSelect.innerHTML  = '<option value="">Pilih Keterangan Terlebih Dahulu</option>';
-    if (nameReadonly) nameReadonly.value    = '';
-    if (snSelect)     snSelect.innerHTML    = '<option value="">Pilih Keterangan Terlebih Dahulu</option>';
-    if (snInput)      snInput.value         = '';
+    if (nameInput) nameInput.value = '';
+    if (nameSelect) nameSelect.innerHTML = '<option value="">Pilih Keterangan Terlebih Dahulu</option>';
+    if (nameReadonly) nameReadonly.value = '';
+    if (snSelect) snSelect.innerHTML = '<option value="">Pilih Keterangan Terlebih Dahulu</option>';
+    if (snInput) snInput.value = '';
 
     clearAutoFilledFields();
 }
@@ -184,16 +184,16 @@ function clearForm() {
  * Clears the auto-filled read-only fields (Division, Laptop, Brand, Spesifikasi).
  */
 function clearAutoFilledFields() {
-    const division    = document.getElementById('division');
-    const laptop      = document.getElementById('laptop');
-    const brand       = document.getElementById('brand');
+    const division = document.getElementById('division');
+    const laptop = document.getElementById('laptop');
+    const brand = document.getElementById('brand');
     const spesifikasi = document.getElementById('spesifikasi');
 
-    if (division)    division.value  = '';
-    if (laptop)      laptop.value    = '';
-    if (brand)       brand.value     = '';
+    if (division) division.value = '';
+    if (laptop) laptop.value = '';
+    if (brand) brand.value = '';
     if (spesifikasi) {
-        spesifikasi.value        = '';
+        spesifikasi.value = '';
         spesifikasi.style.height = 'auto';
     }
 }

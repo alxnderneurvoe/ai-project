@@ -9,7 +9,6 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body">
                 <div class="row g-4">
                     <!-- Device -->
@@ -17,7 +16,6 @@
                         <h6 class="text-primary mb-3">
                             <i class="fas fa-desktop me-2"></i>Device Information
                         </h6>
-
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <table class="table table-dark table-borderless mb-0">
@@ -65,13 +63,11 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- User -->
                     <div class="col-md-6">
                         <h6 class="text-success mb-3">
                             <i class="fas fa-user me-2"></i>User Information
                         </h6>
-
                         <table class="table table-dark table-borderless mb-0">
                             <tr>
                                 <td width="35%">Name</td>
@@ -83,7 +79,6 @@
                             </tr>
                         </table>
                     </div>
-
                     <!-- Specification -->
                     <div class="col-12">
                         <h6 class="text-warning mb-3">
@@ -92,7 +87,8 @@
                         </h6>
                         <div class="card bg-secondary bg-opacity-10 border-secondary">
                             <div class="card-body">
-                                <pre id="detailSpec" class="mb-0 text-white" style="white-space:pre-wrap;font-family:inherit;"></pre>
+                                <pre id="detailSpec" class="mb-0 text-white"
+                                    style="white-space:pre-wrap;font-family:inherit;"></pre>
                             </div>
                         </div>
                     </div>
@@ -106,7 +102,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border-secondary text-white">
@@ -133,7 +128,6 @@
         </div>
     </div>
 </div>
-
 <style>
     @keyframes deleteCheckPop {
         0% {
@@ -165,7 +159,6 @@
         animation: deleteCheckPop 0.45s ease-out;
     }
 </style>
-
 <div class="modal fade" id="deviceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content bg-dark border-secondary text-white">
@@ -174,7 +167,8 @@
                     <i class="fas fa-plus me-2 text-primary"></i>
                     Tambah Device
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <form id="deviceForm">
                 <div class="modal-body">
@@ -273,7 +267,5 @@
         </div>
     </div>
 </div>
-
 <script type="module" src="assets/dashboard/index.js"></script>
-
 <?php include 'templates/footer.php'; ?>

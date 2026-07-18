@@ -3,7 +3,6 @@ require 'auth.php';
 require_role(['admin', 'user', 'viewer']);
 include 'templates/header.php';
 ?>
-
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold text-white mb-0">
         <i class="fas fa-history me-2 text-indigo"></i>Handover Log History
@@ -14,30 +13,22 @@ include 'templates/header.php';
         </span>
     </div>
 </div>
-
 <div class="card card-premium shadow-lg">
-
     <div class="card-header py-3 d-flex align-items-center justify-content-between">
         <h5 class="mb-0 fw-bold text-white">
             <i class="fas fa-list me-2 text-indigo"></i>Transaction Log
         </h5>
         <span class="small text-muted" style="font-size: 0.8rem;">Sorted by latest transaction first</span>
     </div>
-
     <div class="card-body p-4">
-
         <div class="input-group mb-4 search-input-group shadow-sm">
             <span class="input-group-text border-end-0"><i class="fas fa-search text-muted"></i></span>
             <input type="text" id="historySearch" class="form-control border-start-0 ps-0"
                 placeholder="Cari berdasarkan nama karyawan, Serial Number (SN), keterangan, laptop, divisi...">
         </div>
-
         <div class="table-responsive">
-
             <table class="table table-premium table-hover align-middle mb-0">
-
                 <thead>
-
                     <tr>
                         <th class="ps-3">Timestamp</th>
                         <th>Name</th>
@@ -46,18 +37,11 @@ include 'templates/header.php';
                         <th class="pe-3">Division</th>
                         <th>Keterangan</th>
                     </tr>
-
                 </thead>
-
                 <tbody id="historyTable"></tbody>
-
             </table>
-
         </div>
-
     </div>
-
 </div>
-
 <script type="module" src="assets/history-device/index.js"></script>
 <?php include 'templates/footer.php'; ?>
