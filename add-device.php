@@ -31,7 +31,7 @@ include 'templates/header.php';
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label text-white-50">Laptop</label>
+                    <label class="form-label text-white-50">Nama Device</label>
                     <input type="text" class="form-control form-control-lg" id="laptop" name="laptop" required>
                 </div>
                 <div class="col-md-6">
@@ -91,6 +91,7 @@ include 'templates/header.php';
                     <i class="fas fa-paper-plane me-2"></i>Submit Device
                 </button>
             </div>
+            <div id="deviceOutput" class="alert alert-light text-dark mt-3 d-none" role="status"></div>
         </form>
     </div>
 </div>

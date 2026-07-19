@@ -222,6 +222,21 @@ body {
     color: var(--text-muted);
 }
 
+.app-footer {
+    background-color: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.app-footer a {
+    color: var(--text-secondary);
+}
+
+.app-footer a:hover {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
 /* Premium Tables */
 .table-premium {
     border-collapse: separate;

@@ -2,9 +2,19 @@ const addDeviceForm = document.getElementById('addDeviceForm');
 const addDeviceOutput = document.getElementById('deviceOutput');
 const addDeviceSubmit = document.getElementById('submitDeviceBtn');
 
+function setOutput(message, success = true) {
+    if (!addDeviceOutput) return;
+    addDeviceOutput.classList.remove('d-none', 'alert-danger', 'alert-success', 'alert-info');
+    addDeviceOutput.classList.add(success ? 'alert-success' : 'alert-danger');
+    addDeviceOutput.textContent = message;
+}
+
 if (addDeviceForm) {
     addDeviceForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (addDeviceOutput) {
+            addDeviceOutput.classList.add('d-none');
+        }
 
         const formData = new FormData(addDeviceForm);
         const payload = new URLSearchParams();
@@ -16,7 +26,6 @@ if (addDeviceForm) {
         addDeviceSubmit.disabled = true;
         const originalText = addDeviceSubmit.innerHTML;
         addDeviceSubmit.innerHTML = '<i class="fas fa-circle-notch fa-spin me-2"></i>Submitting...';
-        // addDeviceOutput.textContent = 'Mengirim data...';
 
         try {
             const response = await fetch('api/add-device.php', {
@@ -26,13 +35,14 @@ if (addDeviceForm) {
             });
 
             const result = await response.json();
-            addDeviceOutput.textContent = JSON.stringify(result, null, 2);
-
             if (response.ok && result.success) {
+                setOutput('Device berhasil ditambahkan.');
                 addDeviceForm.reset();
+            } else {
+                setOutput(result.message || 'Gagal menambahkan device.', false);
             }
         } catch (error) {
-            addDeviceOutput.textContent = 'Error: ' + error.message;
+            setOutput('Error: ' + error.message, false);
         } finally {
             addDeviceSubmit.disabled = false;
             addDeviceSubmit.innerHTML = originalText;
