@@ -253,6 +253,75 @@ body {
     letter-spacing: 0.05em;
     padding: 1rem 0.75rem;
 }
+
+@media (max-width: 767.98px) {
+    .navbar .navbar-brand {
+        font-size: 1rem;
+    }
+    .navbar .nav-link {
+        padding: 0.45rem 0.7rem !important;
+    }
+    .card-premium {
+        border-radius: 12px;
+    }
+    .card-body {
+        padding: 1.25rem !important;
+    }
+    .table-premium thead th,
+    .table-premium tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+    .table-premium tbody td {
+        font-size: 0.85rem;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    .search-input-group {
+        flex-wrap: wrap;
+    }
+    .search-input-group .form-control {
+        min-width: 0;
+    }
+    .app-footer {
+        padding: 1rem 0.75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .card-stat .card-body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .card-stat .stat-icon {
+        margin-top: 1rem;
+    }
+    .navbar .btn,
+    .navbar-nav .logout-button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    .navbar-collapse {
+        background-color: rgba(15, 23, 42, 0.98);
+        margin-top: 0.5rem;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+    .navbar-nav .nav-link {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        gap: 0.5rem;
+    }
+}
+
+.navbar-nav .logout-button {
+    min-width: 120px;
+}
 .table-premium tbody tr {
     transition: transform 0.15s ease, background-color 0.15s ease;
 }

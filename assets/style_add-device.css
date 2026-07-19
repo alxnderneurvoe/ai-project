@@ -1,0 +1,246 @@
+/* ==========================================
+   Add Device Page Specific Styles
+   ========================================== */
+
+/* ========================================
+   ADD DEVICE FORM CONTAINER
+   ======================================== */
+
+.add-device-form-container {
+    /* Inherited from card-premium if needed */
+}
+
+.add-device-form-wrapper {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   ADD DEVICE FORM SECTIONS
+   ======================================== */
+
+.device-form-section {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.device-form-section:last-child {
+    border-bottom: none;
+}
+
+.device-form-section h4 {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.device-form-section h4 i {
+    color: var(--color-indigo);
+    font-size: 1.25rem;
+}
+
+/* ========================================
+   DEVICE FORM FIELDS
+   ======================================== */
+
+.device-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.device-form-group label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.device-form-group .required {
+    color: var(--color-danger);
+    margin-left: 0.25rem;
+}
+
+.device-form-group .form-control,
+.device-form-group .form-select,
+.device-form-group textarea {
+    background-color: rgba(17, 24, 39, 0.6) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.device-form-group .form-control:focus,
+.device-form-group .form-select:focus,
+.device-form-group textarea:focus {
+    background-color: rgba(17, 24, 39, 0.85) !important;
+    border-color: rgba(99, 102, 241, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+.device-form-group .form-text {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* ========================================
+   DEVICE FORM BUTTONS
+   ======================================== */
+
+.device-form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.device-form-buttons .btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+}
+
+.btn-submit-device {
+    background: linear-gradient(135deg, var(--color-indigo), var(--color-indigo-hover));
+    border: none;
+    border-radius: 10px;
+    color: white;
+}
+
+.btn-submit-device:hover {
+    background: linear-gradient(135deg, var(--color-indigo-hover), #4338ca);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-cancel-device {
+    background-color: rgba(107, 114, 128, 0.2);
+    border: 1px solid rgba(107, 114, 128, 0.3);
+    color: var(--text-secondary);
+}
+
+.btn-cancel-device:hover {
+    background-color: rgba(107, 114, 128, 0.3);
+    border-color: rgba(107, 114, 128, 0.4);
+}
+
+/* ========================================
+   SUCCESS/ERROR MESSAGES
+   ======================================== */
+
+.device-message {
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.device-message.success {
+    background-color: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+}
+
+.device-message.error {
+    background-color: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.device-message i {
+    font-size: 1.25rem;
+}
+
+/* ========================================
+   ADD DEVICE RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: 767.98px) {
+    .add-device-form-container {
+        padding: 1.25rem !important;
+    }
+    
+    .device-form-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .device-form-section h4 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .device-form-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .device-form-buttons .btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .add-device-form-container {
+        padding: 1rem !important;
+    }
+    
+    .device-form-wrapper {
+        border-radius: 12px;
+    }
+    
+    .device-form-section {
+        padding: 1rem;
+    }
+    
+    .device-form-section h4 {
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .device-form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .device-form-group label {
+        font-size: 0.875rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .device-form-group .form-control,
+    .device-form-group .form-select,
+    .device-form-group textarea {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 0.65rem 0.75rem;
+        border-radius: 8px;
+    }
+    
+    .device-form-group .form-text {
+        font-size: 0.75rem;
+    }
+    
+    .device-form-buttons .btn {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .device-message {
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .device-message i {
+        font-size: 1rem;
+    }
+}

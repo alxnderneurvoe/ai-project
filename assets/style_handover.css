@@ -1,0 +1,167 @@
+/* ==========================================
+   Handover Page Specific Styles
+   ========================================== */
+
+/* ========================================
+   HANDOVER FORM CONTAINER
+   ======================================== */
+
+.handover-form-container {
+    /* Inherited from card-premium if needed */
+}
+
+.handover-section {
+    margin-bottom: 2rem;
+}
+
+.handover-section h5 {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* ========================================
+   HANDOVER FORM FIELDS
+   ======================================== */
+
+.handover-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.handover-form-group label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.handover-form-group .form-control,
+.handover-form-group .form-select {
+    background-color: rgba(17, 24, 39, 0.6) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+
+/* ========================================
+   HANDOVER BUTTON GROUP
+   ======================================== */
+
+.handover-button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.handover-button-group .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* ========================================
+   DEVICE SELECTION AREA
+   ======================================== */
+
+.device-selection-area {
+    background-color: rgba(31, 41, 55, 0.2);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.selected-devices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.selected-device-item {
+    background-color: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selected-device-item .device-info {
+    flex: 1;
+}
+
+.selected-device-item .device-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.selected-device-item .device-serial {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   HANDOVER RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: 767.98px) {
+    .handover-form-container {
+        padding: 1.25rem !important;
+    }
+    
+    .handover-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .handover-section h5 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .handover-button-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .handover-button-group .btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .handover-form-container {
+        padding: 1rem !important;
+    }
+    
+    .handover-section {
+        margin-bottom: 1.25rem;
+    }
+    
+    .handover-form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .handover-form-group label {
+        font-size: 0.875rem;
+    }
+    
+    .handover-form-group .form-control,
+    .handover-form-group .form-select {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 0.65rem 0.75rem;
+    }
+    
+    .selected-device-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .device-selection-area {
+        padding: 1rem;
+    }
+}

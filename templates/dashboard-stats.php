@@ -1,8 +1,8 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold text-white mb-0">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+    <h3 class="fw-bold text-white mb-2 mb-md-0">
         <i class="fas fa-chart-pie me-2 text-indigo"></i>Dashboard Device
     </h3>
-    <div class="text-white-50 small">
+    <div class="text-white-50 small mt-2 mt-md-0">
         <span class="badge bg-dark border border-secondary px-3 py-2 rounded-pill">
             <i class="fas fa-circle text-success me-2 animate-pulse"></i>Live Monitoring
         </span>

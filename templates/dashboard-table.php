@@ -19,10 +19,10 @@
                 <thead>
                     <tr>
                         <th class="ps-3">SN</th>
-                        <th>No List</th>
+                        <th class="d-none d-sm-table-cell">No List</th>
                         <th>Laptop</th>
                         <th>Name</th>
-                        <th>Division</th>
+                        <th class="d-none d-lg-table-cell">Division</th>
                         <th class="pe-3">Status</th>
                         <?php if ($currentRole === 'admin'): ?>
                             <th class="pe-3">Actions</th>

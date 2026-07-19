@@ -16,7 +16,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon"
         href="https://www.caliana.id/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FCalianaLogoOnly.04c7317d.png&w=1200&q=90">
-    <link rel="stylesheet" href="assets/style.css">
+    
+    <!-- Common Styles (All Pages) -->
+    <link rel="stylesheet" href="assets/style_common.css">
+    
+    <!-- Page-Specific Styles -->
+    <?php
+        $current_page = basename($_SERVER['PHP_SELF']);
+        $page_styles = [
+            'dashboard.php' => 'style_dashboard.css',
+            'handover.php' => 'style_handover.css',
+            'history.php' => 'style_history.css',
+            'add-device.php' => 'style_add-device.css',
+            'login.php' => 'style_login.css',
+        ];
+        
+        if (isset($page_styles[$current_page])) {
+            echo '<link rel="stylesheet" href="assets/' . $page_styles[$current_page] . '">';
+        }
+    ?>
 </head>
 
 <body>
