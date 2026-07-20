@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once '../config/webhook.php';
 require_once '../auth.php';

@@ -1,0 +1,20 @@
+services:
+  it-asset:
+    build: .
+
+    container_name: it-asset
+
+    restart: unless-stopped
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - .:/var/www/html
+
+    networks:
+      - homelab
+
+networks:
+  homelab:
+    external: true
