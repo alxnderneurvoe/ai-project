@@ -219,20 +219,23 @@ include 'templates/header.php';
                             <label class="form-label text-white-50">Storage</label>
                             <select id="deviceStorage" class="form-select form-select-lg">
                                 <option value="">Pilih Storage</option>
+                                <option value="">---------SSD NVME---------</option>
                                 <option value="64GB - SSD NVME">64GB - SSD NVME</option>
-                                <option value="64GB - SSD SATA">64GB - SSD SATA</option>
-                                <option value="64GB - HDD SATA">64GB - HDD SATA</option>
                                 <option value="128GB - SSD NVME">128GB - SSD NVME</option>
-                                <option value="128GB - SSD SATA">128GB - SSD SATA</option>
-                                <option value="128GB - HDD SATA">128GB - HDD SATA</option>
                                 <option value="256GB - SSD NVME">256GB - SSD NVME</option>
-                                <option value="256GB - SSD SATA">256GB - SSD SATA</option>
-                                <option value="256GB - HDD SATA">256GB - HDD SATA</option>
                                 <option value="512GB - SSD NVME">512GB - SSD NVME</option>
-                                <option value="512GB - SSD SATA">512GB - SSD SATA</option>
-                                <option value="512GB - HDD SATA">512GB - HDD SATA</option>
                                 <option value="1TB - SSD NVME">1TB - SSD NVME</option>
+                                <option value="">---------SSD SATA---------</option>
+                                <option value="64GB - SSD SATA">64GB - SSD SATA</option>
+                                <option value="128GB - SSD SATA">128GB - SSD SATA</option>
+                                <option value="256GB - SSD SATA">256GB - SSD SATA</option>
+                                <option value="512GB - SSD SATA">512GB - SSD SATA</option>
                                 <option value="1TB - SSD SATA">1TB - SSD SATA</option>
+                                <option value="">---------HDD SATA---------</option>
+                                <option value="64GB - HDD SATA">64GB - HDD SATA</option>
+                                <option value="128GB - HDD SATA">128GB - HDD SATA</option>
+                                <option value="256GB - HDD SATA">256GB - HDD SATA</option>
+                                <option value="512GB - HDD SATA">512GB - HDD SATA</option>
                                 <option value="1TB - HDD SATA">1TB - HDD SATA</option>
                             </select>
                         </div>
