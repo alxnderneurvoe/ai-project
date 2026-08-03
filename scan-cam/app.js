@@ -28,22 +28,33 @@ function setConn(ok, msg) {
 
 async function loadList() {
   try {
-    const res = await fetch(LIST_URL);
-    if (!res.ok) throw new Error('bad status');
+    const res = await fetch(LIST_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('bad status ' + res.status);
     const data = await res.json();
+    console.log('[sn-scanner] data mentah dari n8n:', data);
     allEntries = (Array.isArray(data) ? data : [])
-      .map(d => ({ timestamp: d.timestamp, type: d.type, name: d.name, listing: d.listing, sn: d.sn }))
+      .map(d => ({
+        timestamp: d.timestamp,
+        type: (d.type || '').toString().trim(),
+        name: (d.name || '').toString().trim(),
+        listing: (d.listing || '').toString().trim(),
+        sn: (d.sn || '').toString().trim()
+      }))
       // buang baris artefak (mis. baris header ganda) yang listing-nya bukan format kode asli
-      .filter(e => typeof e.listing === 'string' && e.listing.includes('/'));
-    setConn(true, 'Terhubung ke n8n');
+      .filter(e => e.listing.includes('/'));
+    console.log('[sn-scanner] entries setelah dibersihkan:', allEntries);
+    console.log('[sn-scanner] daftar type unik yang terbaca:', [...new Set(allEntries.map(e => e.type))]);
+    setConn(true, 'Terhubung ke n8n (' + allEntries.length + ' baris)');
     if (typeSelect.value) renderForType(typeSelect.value);
   } catch (err) {
+    console.error('[sn-scanner] gagal load list:', err);
     setConn(false, 'Gagal terhubung ke n8n');
   }
 }
 
 function renderForType(type) {
   const filtered = allEntries.filter(e => e.type === type);
+  console.log('[sn-scanner] filter tipe "' + type + '" ->', filtered.length, 'baris cocok');
   const emptyOnes = filtered.filter(e => !e.sn);
 
   listingSelect.innerHTML = '<option value="">— pilih listing —</option>' +
@@ -102,7 +113,15 @@ document.getElementById('start-scan').onclick = () => {
   html5QrCode = new Html5Qrcode('reader');
   html5QrCode.start(
     { facingMode: 'environment' },
-    { fps: 10, qrbox: { width: 260, height: 140 } },
+    {
+      fps: 10,
+      qrbox: { width: 260, height: 140 },
+      videoConstraints: {
+        facingMode: 'environment',
+        focusMode: 'continuous',   // biar kamera terus re-fokus, gak blur pas didekatkan
+        advanced: [{ focusMode: 'continuous' }]
+      }
+    },
     (decodedText) => {
       if (scanLocked) return;
       scanLocked = true;
@@ -113,12 +132,40 @@ document.getElementById('start-scan').onclick = () => {
       html5QrCode.stop().catch(() => {});
     },
     () => {}
-  ).catch(() => {
+  ).then(() => {
+    applyCameraZoom(2); // coba zoom optik 2x kalau device support; kalau tidak, fallback CSS zoom
+  }).catch(() => {
     toast('Kamera tidak bisa diakses — pastikan buka lewat HTTPS', true);
     document.getElementById('start-scan').style.display = 'inline-block';
     document.getElementById('stop-scan').style.display = 'none';
   });
 };
+
+// Coba pakai kemampuan zoom optik kamera (Chrome Android mendukung ini).
+// Kalau device/browser tidak support, pakai zoom digital lewat CSS transform sebagai fallback.
+function applyCameraZoom(desiredZoom) {
+  try {
+    const videoEl = document.querySelector('#reader video');
+    if (!videoEl || !videoEl.srcObject) return;
+    const track = videoEl.srcObject.getVideoTracks()[0];
+    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+    if (capabilities.zoom) {
+      const zoom = Math.min(desiredZoom, capabilities.zoom.max || desiredZoom);
+      track.applyConstraints({ advanced: [{ zoom }] })
+        .then(() => console.log('[sn-scanner] zoom optik diterapkan:', zoom))
+        .catch(() => applyCssZoom(videoEl, desiredZoom));
+    } else {
+      applyCssZoom(videoEl, desiredZoom);
+    }
+  } catch (err) {
+    console.warn('[sn-scanner] zoom tidak didukung, pakai CSS zoom fallback', err);
+  }
+}
+
+function applyCssZoom(videoEl, scale) {
+  videoEl.style.transform = `scale(${scale})`;
+  videoEl.style.transformOrigin = 'center center';
+}
 
 document.getElementById('stop-scan').onclick = () => {
   scanLocked = true;
