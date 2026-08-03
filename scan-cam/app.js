@@ -99,7 +99,6 @@ listingSelect.onchange = () => {
 
 document.getElementById('cancel-btn').onclick = () => {
   scanLocked = true;
-  stopAutoZoom();
   if (html5QrCode) { html5QrCode.stop().catch(() => {}); }
   document.getElementById('start-scan').style.display = 'inline-block';
   document.getElementById('stop-scan').style.display = 'none';
@@ -120,12 +119,10 @@ document.getElementById('start-scan').onclick = () => {
       // Sengaja TIDAK isi videoConstraints tambahan (mis. focusMode) di sini —
       // Safari iOS suka menolak (OverconstrainedError) constraint yang gak dikenal
       // saat getUserMedia awal, dan itu bikin kamera gagal start total.
-      // Fokus & zoom dicoba belakangan setelah stream jalan (lihat startAutoZoom & applyContinuousFocus).
     },
     (decodedText) => {
       if (scanLocked) return;
       scanLocked = true;
-      stopAutoZoom();
       document.getElementById('sn-input').value = decodedText;
       document.getElementById('start-scan').style.display = 'inline-block';
       document.getElementById('stop-scan').style.display = 'none';
@@ -135,7 +132,7 @@ document.getElementById('start-scan').onclick = () => {
     () => {}
   ).then(() => {
     applyContinuousFocus();
-    startAutoZoom();
+    applyZoom(currentZoom); // terapkan level zoom yang sedang aktif begitu kamera nyala
   }).catch((err) => {
     console.error('[sn-scanner] gagal start kamera:', err);
     toast('Kamera tidak bisa diakses — pastikan buka lewat HTTPS', true);
@@ -158,53 +155,47 @@ function applyContinuousFocus() {
   }
 }
 
-// ====== Auto-zoom: naik bertahap sampai barcode kebaca, lalu ulang siklus kalau belum ketemu ======
-let zoomTimer = null;
-let zoomStepIndex = 0;
-let zoomSteps = [1, 1.5, 2, 2.5, 3]; // dipakai untuk CSS fallback; utk zoom optik disesuaikan ke capability device
+// ====== Zoom manual: tombol 1x / 2x / 5x / 10x ======
+let currentZoom = 1;
 
-function startAutoZoom() {
-  stopAutoZoom();
-  zoomStepIndex = 0;
+document.querySelectorAll('.btn-zoom').forEach(btn => {
+  btn.onclick = () => {
+    const z = parseFloat(btn.dataset.zoom);
+    currentZoom = z;
+    document.querySelectorAll('.btn-zoom').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyZoom(z);
+  };
+});
 
+function applyZoom(zoomValue) {
   const videoEl = document.querySelector('#reader video');
-  if (!videoEl || !videoEl.srcObject) return;
-  const track = videoEl.srcObject.getVideoTracks()[0];
+  if (!videoEl || !videoEl.srcObject) return; // kamera belum nyala, nilai tersimpan & dipakai saat start
+
+  let track = null;
+  try {
+    track = videoEl.srcObject.getVideoTracks()[0];
+  } catch (err) { /* noop */ }
 
   let capabilities = {};
   try {
     // Safari iOS sering gak punya getCapabilities() sama sekali — bungkus try-catch.
-    capabilities = track.getCapabilities ? track.getCapabilities() : {};
+    capabilities = (track && track.getCapabilities) ? track.getCapabilities() : {};
   } catch (err) {
     capabilities = {};
   }
 
-  let opticalSteps = null;
-  if (capabilities.zoom) {
-    const min = capabilities.zoom.min ?? 1;
-    const max = capabilities.zoom.max ?? min;
-    opticalSteps = [0, 0.25, 0.5, 0.75, 1].map(f => min + (max - min) * f);
-    console.log('[sn-scanner] auto-zoom pakai zoom optik, range:', min, '-', max);
+  if (capabilities.zoom && track.applyConstraints) {
+    // Zoom optik asli (Chrome Android biasanya support) — clamp ke batas kemampuan device.
+    const z = Math.min(zoomValue, capabilities.zoom.max || zoomValue);
+    track.applyConstraints({ advanced: [{ zoom: z }] })
+      .then(() => console.log('[sn-scanner] zoom optik diterapkan:', z))
+      .catch(() => applyCssZoom(videoEl, zoomValue));
   } else {
-    console.log('[sn-scanner] auto-zoom pakai fallback CSS scale (device tidak dukung zoom optik / Safari iOS)');
+    // Fallback zoom digital (CSS scale) — selalu jalan, termasuk di Safari iOS.
+    console.log('[sn-scanner] pakai CSS zoom fallback:', zoomValue + 'x');
+    applyCssZoom(videoEl, zoomValue);
   }
-
-  const applyStep = () => {
-    if (opticalSteps && track.applyConstraints) {
-      const z = opticalSteps[zoomStepIndex % opticalSteps.length];
-      track.applyConstraints({ advanced: [{ zoom: z }] }).catch(() => {});
-    } else {
-      applyCssZoom(videoEl, zoomSteps[zoomStepIndex % zoomSteps.length]);
-    }
-    zoomStepIndex++;
-  };
-
-  applyStep(); // langsung mulai dari step pertama
-  zoomTimer = setInterval(applyStep, 1500);
-}
-
-function stopAutoZoom() {
-  if (zoomTimer) { clearInterval(zoomTimer); zoomTimer = null; }
 }
 
 function applyCssZoom(videoEl, scale) {
@@ -214,7 +205,6 @@ function applyCssZoom(videoEl, scale) {
 
 document.getElementById('stop-scan').onclick = () => {
   scanLocked = true;
-  stopAutoZoom();
   if (html5QrCode) html5QrCode.stop().catch(() => {});
   document.getElementById('start-scan').style.display = 'inline-block';
   document.getElementById('stop-scan').style.display = 'none';
