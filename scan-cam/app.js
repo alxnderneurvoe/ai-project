@@ -32,7 +32,7 @@ async function loadList() {
     if (!res.ok) throw new Error('bad status');
     const data = await res.json();
     allEntries = (Array.isArray(data) ? data : []).map(d => ({
-      timestamp: d.timestamp, name: d.name, listing: d.listing, sn: d.sn
+      timestamp: d.timestamp, type: d.type, listing: d.listing, sn: d.sn
     })).filter(e => e.listing);
     setConn(true, 'Terhubung ke n8n');
     if (typeSelect.value) renderForType(typeSelect.value);
@@ -42,7 +42,7 @@ async function loadList() {
 }
 
 function renderForType(type) {
-  const filtered = allEntries.filter(e => e.name === type);
+  const filtered = allEntries.filter(e => e.type === type);
   const emptyOnes = filtered.filter(e => !e.sn);
 
   listingSelect.innerHTML = '<option value="">— pilih listing —</option>' +
