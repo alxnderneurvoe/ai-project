@@ -2,7 +2,7 @@
 const SCAN_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/scan-sn';
 const LIST_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/list-sn';
 
-let allEntries = [];   // {timestamp, type, listing, sn}
+let allEntries = [];   // {timestamp, name, listing, sn}
 let selectedListing = null;
 let html5QrCode = null;
 let scanLocked = false; // cegah callback scan kepanggil berkali-kali (blast) untuk 1x scan
@@ -17,12 +17,12 @@ const listingEmptyNote = document.getElementById('listing-empty-note');
 function toast(msg, danger) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classtype = 'toast show' + (danger ? ' danger' : '');
-  setTimeout(() => t.classtype = 'toast', 2500);
+  t.className = 'toast show' + (danger ? ' danger' : '');
+  setTimeout(() => t.className = 'toast', 2500);
 }
 
 function setConn(ok, msg) {
-  document.getElementById('conn-dot').classtype = 'dot ' + (ok ? 'on' : 'off');
+  document.getElementById('conn-dot').className = 'dot ' + (ok ? 'on' : 'off');
   document.getElementById('conn-text').textContent = msg;
 }
 
@@ -31,9 +31,10 @@ async function loadList() {
     const res = await fetch(LIST_URL);
     if (!res.ok) throw new Error('bad status');
     const data = await res.json();
-    allEntries = (Array.isArray(data) ? data : []).map(d => ({
-      timestamp: d.timestamp, type: d.type, listing: d.listing, sn: d.sn
-    })).filter(e => e.listing);
+    allEntries = (Array.isArray(data) ? data : [])
+      .map(d => ({ timestamp: d.timestamp, type: d.type, name: d.name, listing: d.listing, sn: d.sn }))
+      // buang baris artefak (mis. baris header ganda) yang listing-nya bukan format kode asli
+      .filter(e => typeof e.listing === 'string' && e.listing.includes('/'));
     setConn(true, 'Terhubung ke n8n');
     if (typeSelect.value) renderForType(typeSelect.value);
   } catch (err) {
@@ -56,8 +57,9 @@ function renderForType(type) {
   rowsEl.innerHTML = filtered.map(e => `
     <tr>
       <td class="sn">${e.listing}</td>
+      <td>${e.name || '—'}</td>
       <td>${e.sn ? `<span>${e.sn}</span>` : '<span class="badge empty">belum ada</span>'}</td>
-    </tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:#8a917f;">Belum ada data untuk tipe ini.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;color:#8a917f;">Belum ada data untuk tipe ini.</td></tr>';
 }
 
 typeSelect.onchange = () => {
