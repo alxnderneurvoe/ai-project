@@ -116,12 +116,11 @@ document.getElementById('start-scan').onclick = () => {
     { facingMode: 'environment' },
     {
       fps: 10,
-      qrbox: { width: 260, height: 140 },
-      videoConstraints: {
-        facingMode: 'environment',
-        focusMode: 'continuous',   // biar kamera terus re-fokus, gak blur pas didekatkan
-        advanced: [{ focusMode: 'continuous' }]
-      }
+      qrbox: { width: 260, height: 140 }
+      // Sengaja TIDAK isi videoConstraints tambahan (mis. focusMode) di sini —
+      // Safari iOS suka menolak (OverconstrainedError) constraint yang gak dikenal
+      // saat getUserMedia awal, dan itu bikin kamera gagal start total.
+      // Fokus & zoom dicoba belakangan setelah stream jalan (lihat startAutoZoom & applyContinuousFocus).
     },
     (decodedText) => {
       if (scanLocked) return;
@@ -135,13 +134,29 @@ document.getElementById('start-scan').onclick = () => {
     },
     () => {}
   ).then(() => {
+    applyContinuousFocus();
     startAutoZoom();
-  }).catch(() => {
+  }).catch((err) => {
+    console.error('[sn-scanner] gagal start kamera:', err);
     toast('Kamera tidak bisa diakses — pastikan buka lewat HTTPS', true);
     document.getElementById('start-scan').style.display = 'inline-block';
     document.getElementById('stop-scan').style.display = 'none';
   });
 };
+
+// Coba aktifkan continuous autofocus SETELAH kamera nyala (bukan saat request awal),
+// supaya browser yang gak dukung constraint ini (Safari iOS) tetap bisa jalan normal, cuma tanpa efek ini.
+function applyContinuousFocus() {
+  try {
+    const videoEl = document.querySelector('#reader video');
+    if (!videoEl || !videoEl.srcObject) return;
+    const track = videoEl.srcObject.getVideoTracks()[0];
+    if (!track || !track.applyConstraints) return;
+    track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {});
+  } catch (err) {
+    // diam-diam skip, gak perlu ganggu proses scan
+  }
+}
 
 // ====== Auto-zoom: naik bertahap sampai barcode kebaca, lalu ulang siklus kalau belum ketemu ======
 let zoomTimer = null;
@@ -155,7 +170,14 @@ function startAutoZoom() {
   const videoEl = document.querySelector('#reader video');
   if (!videoEl || !videoEl.srcObject) return;
   const track = videoEl.srcObject.getVideoTracks()[0];
-  const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+
+  let capabilities = {};
+  try {
+    // Safari iOS sering gak punya getCapabilities() sama sekali — bungkus try-catch.
+    capabilities = track.getCapabilities ? track.getCapabilities() : {};
+  } catch (err) {
+    capabilities = {};
+  }
 
   let opticalSteps = null;
   if (capabilities.zoom) {
@@ -164,11 +186,11 @@ function startAutoZoom() {
     opticalSteps = [0, 0.25, 0.5, 0.75, 1].map(f => min + (max - min) * f);
     console.log('[sn-scanner] auto-zoom pakai zoom optik, range:', min, '-', max);
   } else {
-    console.log('[sn-scanner] auto-zoom pakai fallback CSS scale (device tidak dukung zoom optik)');
+    console.log('[sn-scanner] auto-zoom pakai fallback CSS scale (device tidak dukung zoom optik / Safari iOS)');
   }
 
   const applyStep = () => {
-    if (opticalSteps) {
+    if (opticalSteps && track.applyConstraints) {
       const z = opticalSteps[zoomStepIndex % opticalSteps.length];
       track.applyConstraints({ advanced: [{ zoom: z }] }).catch(() => {});
     } else {
