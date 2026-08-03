@@ -72,6 +72,11 @@
                             History
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scan-cam/index.html">
+                            Scan Camera
+                        </a>
+                    </li>
                     <a href="logout.php" class="btn btn-outline-danger">
                         <i class="fas fa-sign-out-alt"></i>
                         Logout
