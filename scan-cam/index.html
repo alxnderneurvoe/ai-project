@@ -1,136 +1,95 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SN Scanner — IT Asset</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-<style>
-  :root {
-    --ink: #16211a; --paper: #f6f7f4; --line: #d9ddd3;
-    --accent: #1f6d4c; --accent-dim: #e4efe8;
-    --danger: #b3432c; --danger-dim: #f6e6e1;
-    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; }
-  .wrap { max-width: 640px; margin: 0 auto; }
-  header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
-  h1 { font-size: 19px; margin: 0; letter-spacing: -0.01em; }
-  .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #5a6259; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #999; flex-shrink: 0; }
-  .dot.on { background: var(--accent); }
-  .dot.off { background: var(--danger); }
-  .sub { font-size: 13px; color: #5a6259; margin: 0 0 18px; }
-  .card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
-  .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #5a6259; margin: 0 0 10px; }
-  label { font-size: 12.5px; color: #45503f; display: block; margin-bottom: 3px; }
-  select, input[type=text], input[type=url] {
-    width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px;
-    font-size: 14px; background: var(--paper); color: var(--ink); margin-bottom: 10px;
-  }
-  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-  button { font-size: 13.5px; font-weight: 600; border-radius: 7px; border: 1px solid transparent;
-    padding: 9px 14px; cursor: pointer; transition: opacity .15s; }
-  button:disabled { opacity: .4; cursor: not-allowed; }
-  button:hover:not(:disabled) { opacity: .85; }
-  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-secondary { background: var(--accent-dim); color: var(--accent); }
-  .btn-ghost { background: transparent; color: #45503f; border-color: var(--line); }
-  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  #reader { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
-  .listing-code { font-family: var(--mono); font-weight: 700; font-size: 15px; padding: 10px; background: var(--accent-dim);
-    border-radius: 7px; margin-bottom: 10px; }
-  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px;
-    font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
-  .toast.danger { background: var(--danger); }
-  .empty-note { font-size: 12.5px; color: #8a917f; margin-top: -4px; margin-bottom: 10px; }
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); }
-  th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #5a6259; font-weight: 600; }
-  td.sn { font-family: var(--mono); }
-  .badge { font-size: 10.5px; padding: 2px 7px; border-radius: 20px; background: var(--accent-dim); color: var(--accent); }
-  .badge.empty { background: var(--danger-dim); color: var(--danger); }
-</style>
-</head>
-<body>
-<div class="wrap">
+    <head>
+        <meta charset="UTF-8">
+        <meta type="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SN Scanner — IT Asset</title>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
 
-  <header>
-    <h1>SN Scanner</h1>
-    <div class="status"><span class="dot" id="conn-dot"></span><span id="conn-text">Memeriksa koneksi…</span></div>
-  </header>
-  <p class="sub">Pilih tipe → pilih listing yang belum ada SN-nya → scan → submit.</p>
+    <body>
+        <div class="wrap">
+            <header>
+                <h1>SN Scanner</h1>
+                <div class="status"><span class="dot" id="conn-dot"></span><span
+                        id="conn-text">Memeriksa koneksi…</span></div>
+            </header>
+            <p class="sub">Pilih tipe → pilih listing yang belum ada SN-nya →
+                scan → submit.</p>
 
-  <div class="card" id="setup-card">
-    <h2>Sambungan n8n</h2>
-    <label for="scan-url">URL Webhook — Isi SN (POST)</label>
-    <input type="url" id="scan-url" placeholder="https://n8n.alxnderneurvoe.xyz/webhook/scan-sn">
-    <label for="list-url">URL Webhook — Ambil List (GET)</label>
-    <input type="url" id="list-url" placeholder="https://n8n.alxnderneurvoe.xyz/webhook/list-sn">
-    <button class="btn-primary" id="save-config">Simpan</button>
-  </div>
+            <div class="card" id="setup-card">
+                <h2>Sambungan n8n</h2>
+                <label for="scan-url">URL Webhook — Isi SN (POST)</label>
+                <input type="url" id="scan-url"
+                    placeholder="https://n8n.alxnderneurvoe.xyz/webhook/scan-sn">
+                <label for="list-url">URL Webhook — Ambil List (GET)</label>
+                <input type="url" id="list-url"
+                    placeholder="https://n8n.alxnderneurvoe.xyz/webhook/list-sn">
+                <button class="btn-primary" id="save-config">Simpan</button>
+            </div>
 
-  <div class="card">
-    <h2>1. Pilih Tipe</h2>
-    <select id="type-select">
-      <option value="">— pilih tipe —</option>
-      <option>GTGH C++</option>
-      <option>OLT C300</option>
-      <option>OLT C320</option>
-      <option>SFP</option>
-      <option>ETP 48</option>
-    </select>
+            <div class="card">
+                <h2>1. Pilih Tipe</h2>
+                <select id="type-select">
+                    <option value>— pilih tipe —</option>
+                    <option>GTGH C++</option>
+                    <option>OLT C300</option>
+                    <option>OLT C320</option>
+                    <option>SFP</option>
+                    <option>ETP 48</option>
+                </select>
 
-    <h2>2. Pilih Listing (yang belum ada SN)</h2>
-    <select id="listing-select" disabled>
-      <option value="">— pilih listing —</option>
-    </select>
-    <div class="empty-note" id="listing-empty-note"></div>
-  </div>
+                <h2>2. Pilih Listing (yang belum ada SN)</h2>
+                <select id="listing-select" disabled>
+                    <option value>— pilih listing —</option>
+                </select>
+                <div class="empty-note" id="listing-empty-note"></div>
+            </div>
 
-  <div class="card" id="scan-card" style="display:none;">
-    <h2>3. Scan SN</h2>
-    <div class="listing-code" id="active-listing"></div>
-    <div id="reader"></div>
-    <div class="btn-row" style="margin-bottom:12px;">
-      <button class="btn-primary" id="start-scan">Mulai Scan</button>
-      <button class="btn-ghost" id="stop-scan" style="display:none;">Stop</button>
-    </div>
-    <label for="sn-input">Hasil Scan SN (bisa diedit manual)</label>
-    <input type="text" id="sn-input" placeholder="Otomatis terisi setelah scan, atau ketik manual">
-    <div class="btn-row">
-      <button class="btn-primary" id="submit-btn">Submit</button>
-      <button class="btn-ghost" id="cancel-btn">Batal</button>
-    </div>
-  </div>
+            <div class="card" id="scan-card" style="display:none;">
+                <h2>3. Scan SN</h2>
+                <div class="listing-code" id="active-listing"></div>
+                <div id="reader"></div>
+                <div class="btn-row" style="margin-bottom:12px;">
+                    <button class="btn-primary" id="start-scan">Mulai
+                        Scan</button>
+                    <button class="btn-ghost" id="stop-scan"
+                        style="display:none;">Stop</button>
+                </div>
+                <label for="sn-input">Hasil Scan SN (bisa diedit manual)</label>
+                <input type="text" id="sn-input"
+                    placeholder="Otomatis terisi setelah scan, atau ketik manual">
+                <div class="btn-row">
+                    <button class="btn-primary" id="submit-btn">Submit</button>
+                    <button class="btn-ghost" id="cancel-btn">Batal</button>
+                </div>
+            </div>
 
-  <div class="card">
-    <h2>Status Listing Tipe Ini <span class="badge" id="count-badge">0</span></h2>
-    <div class="btn-row" style="margin-bottom:12px;">
-      <button class="btn-ghost" id="refresh-btn">Refresh</button>
-    </div>
-    <table>
-      <thead><tr><th>Listing</th><th>SN</th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table>
-  </div>
+            <div class="card">
+                <h2>Status Listing Tipe Ini <span class="badge"
+                        id="count-badge">0</span></h2>
+                <div class="btn-row" style="margin-bottom:12px;">
+                    <button class="btn-ghost" id="refresh-btn">Refresh</button>
+                </div>
+                <table>
+                    <thead><tr><th>Listing</th><th>SN</th></tr></thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
 
-</div>
+        </div>
 
-<div class="toast" id="toast"></div>
+        <div class="toast" id="toast"></div>
 
-<script>
+        <script>
 let scanUrl = localStorage.getItem('sn_scan_url') || '';
 let listUrl = localStorage.getItem('sn_list_url') || '';
 document.getElementById('scan-url').value = scanUrl;
 document.getElementById('list-url').value = listUrl;
 
-let allEntries = [];   // {timestamp, name, listing, sn}
+let allEntries = [];   // {timestamp, type, listing, sn}
 let selectedListing = null;
 let html5QrCode = null;
 let scanLocked = false; // cegah callback scan kepanggil berkali-kali (blast) untuk 1x scan
@@ -145,12 +104,12 @@ const listingEmptyNote = document.getElementById('listing-empty-note');
 function toast(msg, danger) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast show' + (danger ? ' danger' : '');
-  setTimeout(() => t.className = 'toast', 2500);
+  t.classtype = 'toast show' + (danger ? ' danger' : '');
+  setTimeout(() => t.classtype = 'toast', 2500);
 }
 
 function setConn(ok, msg) {
-  document.getElementById('conn-dot').className = 'dot ' + (ok ? 'on' : 'off');
+  document.getElementById('conn-dot').classtype = 'dot ' + (ok ? 'on' : 'off');
   document.getElementById('conn-text').textContent = msg;
 }
 
@@ -170,7 +129,7 @@ async function loadList() {
     if (!res.ok) throw new Error('bad status');
     const data = await res.json();
     allEntries = (Array.isArray(data) ? data : []).map(d => ({
-      timestamp: d.timestamp, name: d.name, listing: d.listing, sn: d.sn
+      timestamp: d.timestamp, type: d.type, listing: d.listing, sn: d.sn
     })).filter(e => e.listing);
     setConn(true, 'Terhubung ke n8n');
     if (typeSelect.value) renderForType(typeSelect.value);
@@ -180,7 +139,7 @@ async function loadList() {
 }
 
 function renderForType(type) {
-  const filtered = allEntries.filter(e => e.name === type);
+  const filtered = allEntries.filter(e => e.type === type);
   const emptyOnes = filtered.filter(e => !e.sn);
 
   // dropdown listing kosong
@@ -287,5 +246,5 @@ document.getElementById('refresh-btn').onclick = loadList;
 
 loadList();
 </script>
-</body>
+    </body>
 </html>
