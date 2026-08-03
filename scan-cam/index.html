@@ -1,250 +1,70 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <meta type="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SN Scanner — IT Asset</title>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-        <link rel="stylesheet" href="style.css">
-    </head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SN Scanner — IT Asset</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
 
-    <body>
-        <div class="wrap">
-            <header>
-                <h1>SN Scanner</h1>
-                <div class="status"><span class="dot" id="conn-dot"></span><span
-                        id="conn-text">Memeriksa koneksi…</span></div>
-            </header>
-            <p class="sub">Pilih tipe → pilih listing yang belum ada SN-nya →
-                scan → submit.</p>
+  <header>
+    <h1>SN Scanner</h1>
+    <div class="status"><span class="dot" id="conn-dot"></span><span id="conn-text">Memeriksa koneksi…</span></div>
+  </header>
+  <p class="sub">Pilih tipe → pilih listing yang belum ada SN-nya → scan → submit.</p>
 
-            <div class="card" id="setup-card">
-                <h2>Sambungan n8n</h2>
-                <label for="scan-url">URL Webhook — Isi SN (POST)</label>
-                <input type="url" id="scan-url"
-                    placeholder="https://n8n.alxnderneurvoe.xyz/webhook/scan-sn">
-                <label for="list-url">URL Webhook — Ambil List (GET)</label>
-                <input type="url" id="list-url"
-                    placeholder="https://n8n.alxnderneurvoe.xyz/webhook/list-sn">
-                <button class="btn-primary" id="save-config">Simpan</button>
-            </div>
+  <div class="card">
+    <h2>1. Pilih Tipe</h2>
+    <select id="type-select">
+      <option value="">— pilih tipe —</option>
+      <option>GTGH C++</option>
+      <option>OLT C300</option>
+      <option>OLT C320</option>
+      <option>SFP</option>
+      <option>ETP 48</option>
+    </select>
 
-            <div class="card">
-                <h2>1. Pilih Tipe</h2>
-                <select id="type-select">
-                    <option value>— pilih tipe —</option>
-                    <option>GTGH</option>
-                    <option>OLT C300</option>
-                    <option>OLT C320</option>
-                    <option>SFP</option>
-                    <option>ETP 48</option>
-                </select>
+    <h2>2. Pilih Listing (yang belum ada SN)</h2>
+    <select id="listing-select" disabled>
+      <option value="">— pilih listing —</option>
+    </select>
+    <div class="empty-note" id="listing-empty-note"></div>
+  </div>
 
-                <h2>2. Pilih Listing (yang belum ada SN)</h2>
-                <select id="listing-select" disabled>
-                    <option value>— pilih listing —</option>
-                </select>
-                <div class="empty-note" id="listing-empty-note"></div>
-            </div>
+  <div class="card" id="scan-card" style="display:none;">
+    <h2>3. Scan SN</h2>
+    <div class="listing-code" id="active-listing"></div>
+    <div id="reader"></div>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn-primary" id="start-scan">Mulai Scan</button>
+      <button class="btn-ghost" id="stop-scan" style="display:none;">Stop</button>
+    </div>
+    <label for="sn-input">Hasil Scan SN (bisa diedit manual)</label>
+    <input type="text" id="sn-input" placeholder="Otomatis terisi setelah scan, atau ketik manual">
+    <div class="btn-row">
+      <button class="btn-primary" id="submit-btn">Submit</button>
+      <button class="btn-ghost" id="cancel-btn">Batal</button>
+    </div>
+  </div>
 
-            <div class="card" id="scan-card" style="display:none;">
-                <h2>3. Scan SN</h2>
-                <div class="listing-code" id="active-listing"></div>
-                <div id="reader"></div>
-                <div class="btn-row" style="margin-bottom:12px;">
-                    <button class="btn-primary" id="start-scan">Mulai
-                        Scan</button>
-                    <button class="btn-ghost" id="stop-scan"
-                        style="display:none;">Stop</button>
-                </div>
-                <label for="sn-input">Hasil Scan SN (bisa diedit manual)</label>
-                <input type="text" id="sn-input"
-                    placeholder="Otomatis terisi setelah scan, atau ketik manual">
-                <div class="btn-row">
-                    <button class="btn-primary" id="submit-btn">Submit</button>
-                    <button class="btn-ghost" id="cancel-btn">Batal</button>
-                </div>
-            </div>
+  <div class="card">
+    <h2>Status Listing Tipe Ini <span class="badge" id="count-badge">0</span></h2>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn-ghost" id="refresh-btn">Refresh</button>
+    </div>
+    <table>
+      <thead><tr><th>Listing</th><th>SN</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
 
-            <div class="card">
-                <h2>Status Listing Tipe Ini <span class="badge"
-                        id="count-badge">0</span></h2>
-                <div class="btn-row" style="margin-bottom:12px;">
-                    <button class="btn-ghost" id="refresh-btn">Refresh</button>
-                </div>
-                <table>
-                    <thead><tr><th>Listing</th><th>SN</th></tr></thead>
-                    <tbody id="rows"></tbody>
-                </table>
-            </div>
+</div>
 
-        </div>
+<div class="toast" id="toast"></div>
 
-        <div class="toast" id="toast"></div>
-
-        <script>
-let scanUrl = localStorage.getItem('sn_scan_url') || '';
-let listUrl = localStorage.getItem('sn_list_url') || '';
-document.getElementById('scan-url').value = scanUrl;
-document.getElementById('list-url').value = listUrl;
-
-let allEntries = [];   // {timestamp, type, listing, sn}
-let selectedListing = null;
-let html5QrCode = null;
-let scanLocked = false; // cegah callback scan kepanggil berkali-kali (blast) untuk 1x scan
-
-const typeSelect = document.getElementById('type-select');
-const listingSelect = document.getElementById('listing-select');
-const scanCard = document.getElementById('scan-card');
-const rowsEl = document.getElementById('rows');
-const countBadge = document.getElementById('count-badge');
-const listingEmptyNote = document.getElementById('listing-empty-note');
-
-function toast(msg, danger) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classtype = 'toast show' + (danger ? ' danger' : '');
-  setTimeout(() => t.classtype = 'toast', 2500);
-}
-
-function setConn(ok, msg) {
-  document.getElementById('conn-dot').classtype = 'dot ' + (ok ? 'on' : 'off');
-  document.getElementById('conn-text').textContent = msg;
-}
-
-document.getElementById('save-config').onclick = () => {
-  scanUrl = document.getElementById('scan-url').value.trim();
-  listUrl = document.getElementById('list-url').value.trim();
-  localStorage.setItem('sn_scan_url', scanUrl);
-  localStorage.setItem('sn_list_url', listUrl);
-  toast('Konfigurasi disimpan');
-  loadList();
-};
-
-async function loadList() {
-  if (!listUrl) { setConn(false, 'URL list belum diisi'); return; }
-  try {
-    const res = await fetch(listUrl);
-    if (!res.ok) throw new Error('bad status');
-    const data = await res.json();
-    allEntries = (Array.isArray(data) ? data : []).map(d => ({
-      timestamp: d.timestamp, type: d.type, listing: d.listing, sn: d.sn
-    })).filter(e => e.listing);
-    setConn(true, 'Terhubung ke n8n');
-    if (typeSelect.value) renderForType(typeSelect.value);
-  } catch (err) {
-    setConn(false, 'Gagal terhubung ke n8n');
-  }
-}
-
-function renderForType(type) {
-  const filtered = allEntries.filter(e => e.type === type);
-  const emptyOnes = filtered.filter(e => !e.sn);
-
-  // dropdown listing kosong
-  listingSelect.innerHTML = '<option value="">— pilih listing —</option>' +
-    emptyOnes.map(e => `<option value="${e.listing}">${e.listing}</option>`).join('');
-  listingSelect.disabled = emptyOnes.length === 0;
-  listingEmptyNote.textContent = emptyOnes.length === 0
-    ? 'Semua listing tipe ini sudah ada SN-nya.'
-    : `${emptyOnes.length} listing belum ada SN.`;
-
-  // tabel status
-  countBadge.textContent = filtered.length;
-  rowsEl.innerHTML = filtered.map(e => `
-    <tr>
-      <td class="sn">${e.listing}</td>
-      <td>${e.sn ? `<span>${e.sn}</span>` : '<span class="badge empty">belum ada</span>'}</td>
-    </tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:#8a917f;">Belum ada data untuk tipe ini.</td></tr>';
-}
-
-typeSelect.onchange = () => {
-  scanCard.style.display = 'none';
-  if (typeSelect.value) renderForType(typeSelect.value);
-  else { listingSelect.innerHTML = '<option value="">— pilih listing —</option>'; listingSelect.disabled = true; rowsEl.innerHTML=''; countBadge.textContent=0; listingEmptyNote.textContent=''; }
-};
-
-listingSelect.onchange = () => {
-  selectedListing = listingSelect.value;
-  if (selectedListing) {
-    document.getElementById('active-listing').textContent = selectedListing;
-    scanCard.style.display = 'block';
-    document.getElementById('sn-input').value = '';
-  } else {
-    scanCard.style.display = 'none';
-  }
-};
-
-document.getElementById('cancel-btn').onclick = () => {
-  scanLocked = true;
-  if (html5QrCode) { html5QrCode.stop().catch(()=>{}); }
-  document.getElementById('start-scan').style.display = 'inline-block';
-  document.getElementById('stop-scan').style.display = 'none';
-  listingSelect.value = '';
-  scanCard.style.display = 'none';
-};
-
-document.getElementById('start-scan').onclick = () => {
-  scanLocked = false;
-  document.getElementById('start-scan').style.display = 'none';
-  document.getElementById('stop-scan').style.display = 'inline-block';
-  html5QrCode = new Html5Qrcode('reader');
-  html5QrCode.start(
-    { facingMode: 'environment' },
-    { fps: 10, qrbox: { width: 260, height: 140 } },
-    (decodedText) => {
-      if (scanLocked) return;
-      scanLocked = true;
-      document.getElementById('sn-input').value = decodedText;
-      document.getElementById('start-scan').style.display = 'inline-block';
-      document.getElementById('stop-scan').style.display = 'none';
-      toast('SN terbaca: ' + decodedText);
-      html5QrCode.stop().catch(() => {});
-    },
-    () => {}
-  ).catch(() => {
-    toast('Kamera tidak bisa diakses — pastikan buka lewat HTTPS', true);
-    document.getElementById('start-scan').style.display = 'inline-block';
-    document.getElementById('stop-scan').style.display = 'none';
-  });
-};
-
-document.getElementById('stop-scan').onclick = () => {
-  scanLocked = true;
-  if (html5QrCode) html5QrCode.stop().catch(()=>{});
-  document.getElementById('start-scan').style.display = 'inline-block';
-  document.getElementById('stop-scan').style.display = 'none';
-};
-
-document.getElementById('submit-btn').onclick = async () => {
-  const sn = document.getElementById('sn-input').value.trim();
-  if (!sn) { toast('Isi/scan SN dulu', true); return; }
-  if (!scanUrl) { toast('Isi URL webhook dulu di atas', true); return; }
-  if (!selectedListing) { toast('Pilih listing dulu', true); return; }
-  try {
-    const res = await fetch(scanUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ listing: selectedListing, sn })
-    });
-    const data = await res.json();
-    if (data.status === 'ok') {
-      toast('SN tersimpan untuk ' + selectedListing);
-      scanCard.style.display = 'none';
-      listingSelect.value = '';
-      await loadList();
-    } else {
-      toast(data.message || 'Gagal menyimpan', true);
-    }
-  } catch (err) {
-    toast('Gagal kirim ke n8n — cek koneksi', true);
-  }
-};
-
-document.getElementById('refresh-btn').onclick = loadList;
-
-loadList();
-</script>
-    </body>
+<script src="app.js"></script>
+</body>
 </html>
