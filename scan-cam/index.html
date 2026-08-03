@@ -5,27 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SN Scanner — IT Asset</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
-    --ink: #16211a;
-    --paper: #f6f7f4;
-    --line: #d9ddd3;
-    --accent: #1f6d4c;
-    --accent-dim: #e4efe8;
-    --danger: #b3432c;
-    --danger-dim: #f6e6e1;
+    --ink: #16211a; --paper: #f6f7f4; --line: #d9ddd3;
+    --accent: #1f6d4c; --accent-dim: #e4efe8;
+    --danger: #b3432c; --danger-dim: #f6e6e1;
     --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    padding: 20px;
-  }
-  .wrap { max-width: 720px; margin: 0 auto; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
   header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
   h1 { font-size: 19px; margin: 0; letter-spacing: -0.01em; }
   .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #5a6259; }
@@ -33,71 +23,38 @@
   .dot.on { background: var(--accent); }
   .dot.off { background: var(--danger); }
   .sub { font-size: 13px; color: #5a6259; margin: 0 0 18px; }
-
-  .card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 14px;
-  }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
   .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #5a6259; margin: 0 0 10px; }
-  details.card summary { cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #5a6259; }
-
   label { font-size: 12.5px; color: #45503f; display: block; margin-bottom: 3px; }
-  input[type=text], input[type=url] {
+  select, input[type=text], input[type=url] {
     width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px;
     font-size: 14px; background: var(--paper); color: var(--ink); margin-bottom: 10px;
   }
-  input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-
-  button {
-    font-size: 13.5px; font-weight: 600; border-radius: 7px; border: 1px solid transparent;
-    padding: 9px 14px; cursor: pointer; transition: opacity .15s;
-  }
-  button:hover { opacity: .85; }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button { font-size: 13.5px; font-weight: 600; border-radius: 7px; border: 1px solid transparent;
+    padding: 9px 14px; cursor: pointer; transition: opacity .15s; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  button:hover:not(:disabled) { opacity: .85; }
   button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-secondary { background: var(--accent-dim); color: var(--accent); }
   .btn-ghost { background: transparent; color: #45503f; border-color: var(--line); }
   .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
-
   #reader { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-  th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #5a6259; font-weight: 600; }
-  td.sn { font-family: var(--mono); font-weight: 600; }
-  td.listing { font-family: var(--mono); font-size: 12px; color: #45503f; }
-  .empty { text-align: center; color: #8a917f; padding: 24px 0; font-size: 13px; }
-  .badge { font-size: 10.5px; padding: 2px 7px; border-radius: 20px; background: var(--accent-dim); color: var(--accent); }
-
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  .listing-code { font-family: var(--mono); font-weight: 700; font-size: 15px; padding: 10px; background: var(--accent-dim);
+    border-radius: 7px; margin-bottom: 10px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px;
-    font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
-    max-width: 88vw; text-align: center;
-  }
+    font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
   .toast.danger { background: var(--danger); }
-
-  .modal-bg {
-    display: none; position: fixed; inset: 0; background: rgba(22,33,26,.45);
-    align-items: center; justify-content: center; z-index: 10;
-  }
-  .modal-bg.show { display: flex; }
-  .modal {
-    background: #fff; border-radius: 12px; padding: 22px; text-align: center; width: 260px;
-  }
-  .modal .sn-label { font-family: var(--mono); font-weight: 700; font-size: 15px; margin: 12px 0 2px; }
-  .modal .listing-label { font-family: var(--mono); font-size: 11.5px; color: #5a6259; margin-bottom: 14px; }
-  #qr-render { display: flex; justify-content: center; }
-
-  @media print {
-    body * { visibility: hidden; }
-    #print-area, #print-area * { visibility: visible; }
-    #print-area { position: fixed; top: 40px; left: 0; right: 0; text-align: center; }
-  }
+  .empty-note { font-size: 12.5px; color: #8a917f; margin-top: -4px; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+  th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #5a6259; font-weight: 600; }
+  td.sn { font-family: var(--mono); }
+  .badge { font-size: 10.5px; padding: 2px 7px; border-radius: 20px; background: var(--accent-dim); color: var(--accent); }
+  .badge.empty { background: var(--danger-dim); color: var(--danger); }
 </style>
 </head>
 <body>
@@ -107,88 +64,89 @@
     <h1>SN Scanner</h1>
     <div class="status"><span class="dot" id="conn-dot"></span><span id="conn-text">Memeriksa koneksi…</span></div>
   </header>
-  <p class="sub">Scan barcode/QR SN perangkat — tersimpan otomatis ke Sheet lewat n8n, kode listing dibuat otomatis.</p>
+  <p class="sub">Pilih tipe → pilih listing yang belum ada SN-nya → scan → submit.</p>
 
-  <details class="card" id="setup-card">
-    <summary>Sambungan n8n (klik untuk ubah)</summary>
-    <div style="margin-top:12px;">
-      <label for="scan-url">URL Webhook — Terima Scan (POST)</label>
-      <input type="url" id="scan-url" placeholder="https://your-n8n.app/webhook/scan-sn">
-      <label for="list-url">URL Webhook — Ambil List (GET)</label>
-      <input type="url" id="list-url" placeholder="https://your-n8n.app/webhook/list-sn">
-      <button class="btn-primary" id="save-config">Simpan</button>
-    </div>
-  </details>
+  <div class="card" id="setup-card">
+    <h2>Sambungan n8n</h2>
+    <label for="scan-url">URL Webhook — Isi SN (POST)</label>
+    <input type="url" id="scan-url" placeholder="https://n8n.alxnderneurvoe.xyz/webhook/scan-sn">
+    <label for="list-url">URL Webhook — Ambil List (GET)</label>
+    <input type="url" id="list-url" placeholder="https://n8n.alxnderneurvoe.xyz/webhook/list-sn">
+    <button class="btn-primary" id="save-config">Simpan</button>
+  </div>
 
   <div class="card">
-    <h2>Scan</h2>
+    <h2>1. Pilih Tipe</h2>
+    <select id="type-select">
+      <option value="">— pilih tipe —</option>
+      <option>GTGH C++</option>
+      <option>OLT C300</option>
+      <option>OLT C320</option>
+      <option>SFP</option>
+      <option>ETP 48</option>
+    </select>
+
+    <h2>2. Pilih Listing (yang belum ada SN)</h2>
+    <select id="listing-select" disabled>
+      <option value="">— pilih listing —</option>
+    </select>
+    <div class="empty-note" id="listing-empty-note"></div>
+  </div>
+
+  <div class="card" id="scan-card" style="display:none;">
+    <h2>3. Scan SN</h2>
+    <div class="listing-code" id="active-listing"></div>
     <div id="reader"></div>
     <div class="btn-row" style="margin-bottom:12px;">
       <button class="btn-primary" id="start-scan">Mulai Scan</button>
       <button class="btn-ghost" id="stop-scan" style="display:none;">Stop</button>
     </div>
-    <label for="manual-sn">Input manual (kalau barcode tidak terbaca)</label>
-    <input type="text" id="manual-sn" placeholder="Ketik SN lalu Enter">
-    <label for="team-name">Name</label>
-    <input type="text" id="team-name" placeholder="GTGH C++" value="GTGH C++">
+    <label for="sn-input">Hasil Scan SN (bisa diedit manual)</label>
+    <input type="text" id="sn-input" placeholder="Otomatis terisi setelah scan, atau ketik manual">
+    <div class="btn-row">
+      <button class="btn-primary" id="submit-btn">Submit</button>
+      <button class="btn-ghost" id="cancel-btn">Batal</button>
+    </div>
   </div>
 
   <div class="card">
-    <h2>Daftar Perangkat <span class="badge" id="count-badge">0</span></h2>
+    <h2>Status Listing Tipe Ini <span class="badge" id="count-badge">0</span></h2>
     <div class="btn-row" style="margin-bottom:12px;">
       <button class="btn-ghost" id="refresh-btn">Refresh</button>
-      <button class="btn-secondary" id="qr-btn" disabled>Generate QR</button>
-      <button class="btn-ghost" id="export-btn">Export CSV</button>
     </div>
     <table>
-      <thead><tr><th></th><th>SN</th><th>Listing</th><th>Name</th></tr></thead>
+      <thead><tr><th>Listing</th><th>SN</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
-    <div class="empty" id="empty-msg">Belum ada data.</div>
   </div>
 
 </div>
 
 <div class="toast" id="toast"></div>
 
-<div class="modal-bg" id="qr-modal">
-  <div class="modal">
-    <div id="print-area">
-      <div id="qr-render"></div>
-      <div class="sn-label" id="qr-sn-label"></div>
-      <div class="listing-label" id="qr-listing-label"></div>
-    </div>
-    <div class="btn-row" style="justify-content:center;">
-      <button class="btn-primary" onclick="window.print()">Print</button>
-      <button class="btn-ghost" id="qr-close">Tutup</button>
-    </div>
-  </div>
-</div>
-
 <script>
-// URL webhook sudah diisi otomatis, tapi tetap tersimpan/bisa diubah lewat kolom "Sambungan n8n"
-const DEFAULT_SCAN_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/scan-sn';
-const DEFAULT_LIST_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/list-sn';
-
-let scanUrl = localStorage.getItem('sn_scan_url') || DEFAULT_SCAN_URL;
-let listUrl = localStorage.getItem('sn_list_url') || DEFAULT_LIST_URL;
+let scanUrl = localStorage.getItem('sn_scan_url') || '';
+let listUrl = localStorage.getItem('sn_list_url') || '';
 document.getElementById('scan-url').value = scanUrl;
 document.getElementById('list-url').value = listUrl;
 
-let entries = [];      // {sn, name, listing, timestamp}
-let selectedSn = null;
+let allEntries = [];   // {timestamp, name, listing, sn}
+let selectedListing = null;
 let html5QrCode = null;
+let scanLocked = false; // cegah callback scan kepanggil berkali-kali (blast) untuk 1x scan
 
+const typeSelect = document.getElementById('type-select');
+const listingSelect = document.getElementById('listing-select');
+const scanCard = document.getElementById('scan-card');
 const rowsEl = document.getElementById('rows');
-const emptyMsg = document.getElementById('empty-msg');
 const countBadge = document.getElementById('count-badge');
-const qrBtn = document.getElementById('qr-btn');
+const listingEmptyNote = document.getElementById('listing-empty-note');
 
 function toast(msg, danger) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (danger ? ' danger' : '');
-  setTimeout(() => t.className = 'toast', 2800);
+  setTimeout(() => t.className = 'toast', 2500);
 }
 
 function setConn(ok, msg) {
@@ -205,79 +163,71 @@ document.getElementById('save-config').onclick = () => {
   loadList();
 };
 
-function render() {
-  rowsEl.innerHTML = '';
-  countBadge.textContent = entries.length;
-  emptyMsg.style.display = entries.length ? 'none' : 'block';
-  entries.forEach((e) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><input type="radio" name="sel" data-sn="${e.sn}"></td>
-      <td class="sn">${e.sn}</td>
-      <td class="listing">${e.listing || '—'}</td>
-      <td>${e.name || '—'}</td>`;
-    rowsEl.appendChild(tr);
-  });
-  rowsEl.querySelectorAll('input[type=radio]').forEach(r => {
-    r.onchange = () => { selectedSn = r.dataset.sn; qrBtn.disabled = false; };
-  });
-}
-
 async function loadList() {
   if (!listUrl) { setConn(false, 'URL list belum diisi'); return; }
   try {
     const res = await fetch(listUrl);
     if (!res.ok) throw new Error('bad status');
     const data = await res.json();
-    entries = (Array.isArray(data) ? data : []).map(d => ({
-      sn: d.sn, name: d.name, listing: d.listing, timestamp: d.timestamp
-    })).filter(e => e.sn);
-    render();
+    allEntries = (Array.isArray(data) ? data : []).map(d => ({
+      timestamp: d.timestamp, name: d.name, listing: d.listing, sn: d.sn
+    })).filter(e => e.listing);
     setConn(true, 'Terhubung ke n8n');
+    if (typeSelect.value) renderForType(typeSelect.value);
   } catch (err) {
     setConn(false, 'Gagal terhubung ke n8n');
   }
 }
 
-async function submitSn(sn) {
-  sn = (sn || '').trim();
-  if (!sn) return;
-  if (entries.some(e => e.sn === sn)) {
-    toast('SN "' + sn + '" sudah ada di daftar', true);
-    return;
-  }
-  if (!scanUrl) { toast('Isi URL webhook scan dulu', true); return; }
-  const payload = {
-    sn,
-    name: document.getElementById('team-name').value.trim()
-  };
-  try {
-    const res = await fetch(scanUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.status === 'duplicate') {
-      toast('SN sudah pernah discan sebelumnya', true);
-    } else {
-      entries.push({ ...payload, listing: data.listing, timestamp: new Date().toISOString() });
-      render();
-      toast('Tersimpan — Listing: ' + (data.listing || '-'));
-    }
-  } catch (err) {
-    toast('Gagal kirim ke n8n — cek koneksi', true);
-  }
+function renderForType(type) {
+  const filtered = allEntries.filter(e => e.name === type);
+  const emptyOnes = filtered.filter(e => !e.sn);
+
+  // dropdown listing kosong
+  listingSelect.innerHTML = '<option value="">— pilih listing —</option>' +
+    emptyOnes.map(e => `<option value="${e.listing}">${e.listing}</option>`).join('');
+  listingSelect.disabled = emptyOnes.length === 0;
+  listingEmptyNote.textContent = emptyOnes.length === 0
+    ? 'Semua listing tipe ini sudah ada SN-nya.'
+    : `${emptyOnes.length} listing belum ada SN.`;
+
+  // tabel status
+  countBadge.textContent = filtered.length;
+  rowsEl.innerHTML = filtered.map(e => `
+    <tr>
+      <td class="sn">${e.listing}</td>
+      <td>${e.sn ? `<span>${e.sn}</span>` : '<span class="badge empty">belum ada</span>'}</td>
+    </tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:#8a917f;">Belum ada data untuk tipe ini.</td></tr>';
 }
 
-document.getElementById('manual-sn').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    submitSn(e.target.value);
-    e.target.value = '';
+typeSelect.onchange = () => {
+  scanCard.style.display = 'none';
+  if (typeSelect.value) renderForType(typeSelect.value);
+  else { listingSelect.innerHTML = '<option value="">— pilih listing —</option>'; listingSelect.disabled = true; rowsEl.innerHTML=''; countBadge.textContent=0; listingEmptyNote.textContent=''; }
+};
+
+listingSelect.onchange = () => {
+  selectedListing = listingSelect.value;
+  if (selectedListing) {
+    document.getElementById('active-listing').textContent = selectedListing;
+    scanCard.style.display = 'block';
+    document.getElementById('sn-input').value = '';
+  } else {
+    scanCard.style.display = 'none';
   }
-});
+};
+
+document.getElementById('cancel-btn').onclick = () => {
+  scanLocked = true;
+  if (html5QrCode) { html5QrCode.stop().catch(()=>{}); }
+  document.getElementById('start-scan').style.display = 'inline-block';
+  document.getElementById('stop-scan').style.display = 'none';
+  listingSelect.value = '';
+  scanCard.style.display = 'none';
+};
 
 document.getElementById('start-scan').onclick = () => {
+  scanLocked = false;
   document.getElementById('start-scan').style.display = 'none';
   document.getElementById('stop-scan').style.display = 'inline-block';
   html5QrCode = new Html5Qrcode('reader');
@@ -285,7 +235,13 @@ document.getElementById('start-scan').onclick = () => {
     { facingMode: 'environment' },
     { fps: 10, qrbox: { width: 260, height: 140 } },
     (decodedText) => {
-      submitSn(decodedText);
+      if (scanLocked) return;
+      scanLocked = true;
+      document.getElementById('sn-input').value = decodedText;
+      document.getElementById('start-scan').style.display = 'inline-block';
+      document.getElementById('stop-scan').style.display = 'none';
+      toast('SN terbaca: ' + decodedText);
+      html5QrCode.stop().catch(() => {});
     },
     () => {}
   ).catch(() => {
@@ -296,34 +252,38 @@ document.getElementById('start-scan').onclick = () => {
 };
 
 document.getElementById('stop-scan').onclick = () => {
-  if (html5QrCode) html5QrCode.stop();
+  scanLocked = true;
+  if (html5QrCode) html5QrCode.stop().catch(()=>{});
   document.getElementById('start-scan').style.display = 'inline-block';
   document.getElementById('stop-scan').style.display = 'none';
 };
 
+document.getElementById('submit-btn').onclick = async () => {
+  const sn = document.getElementById('sn-input').value.trim();
+  if (!sn) { toast('Isi/scan SN dulu', true); return; }
+  if (!scanUrl) { toast('Isi URL webhook dulu di atas', true); return; }
+  if (!selectedListing) { toast('Pilih listing dulu', true); return; }
+  try {
+    const res = await fetch(scanUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ listing: selectedListing, sn })
+    });
+    const data = await res.json();
+    if (data.status === 'ok') {
+      toast('SN tersimpan untuk ' + selectedListing);
+      scanCard.style.display = 'none';
+      listingSelect.value = '';
+      await loadList();
+    } else {
+      toast(data.message || 'Gagal menyimpan', true);
+    }
+  } catch (err) {
+    toast('Gagal kirim ke n8n — cek koneksi', true);
+  }
+};
+
 document.getElementById('refresh-btn').onclick = loadList;
-
-document.getElementById('export-btn').onclick = () => {
-  const rows = [['SN', 'Listing', 'Name', 'Timestamp'], ...entries.map(e => [e.sn, e.listing, e.name, e.timestamp])];
-  const csv = rows.map(r => r.map(c => `"${(c || '').toString().replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'daftar-sn.csv';
-  a.click();
-};
-
-qrBtn.onclick = () => {
-  if (!selectedSn) return;
-  const entry = entries.find(e => e.sn === selectedSn);
-  const render_ = document.getElementById('qr-render');
-  render_.innerHTML = '';
-  new QRCode(render_, { text: selectedSn, width: 160, height: 160 });
-  document.getElementById('qr-sn-label').textContent = selectedSn;
-  document.getElementById('qr-listing-label').textContent = entry ? (entry.listing || '') : '';
-  document.getElementById('qr-modal').classList.add('show');
-};
-document.getElementById('qr-close').onclick = () => document.getElementById('qr-modal').classList.remove('show');
 
 loadList();
 </script>
