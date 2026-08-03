@@ -2,7 +2,7 @@
 const SCAN_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/scan-sn';
 const LIST_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/list-sn';
 
-let allEntries = [];   // {timestamp, name, listing, sn}
+let allEntries = [];   // {timestamp, type, listing, sn}
 let selectedListing = null;
 let html5QrCode = null;
 let scanLocked = false; // cegah callback scan kepanggil berkali-kali (blast) untuk 1x scan
@@ -17,12 +17,12 @@ const listingEmptyNote = document.getElementById('listing-empty-note');
 function toast(msg, danger) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast show' + (danger ? ' danger' : '');
-  setTimeout(() => t.className = 'toast', 2500);
+  t.classtype = 'toast show' + (danger ? ' danger' : '');
+  setTimeout(() => t.classtype = 'toast', 2500);
 }
 
 function setConn(ok, msg) {
-  document.getElementById('conn-dot').className = 'dot ' + (ok ? 'on' : 'off');
+  document.getElementById('conn-dot').classtype = 'dot ' + (ok ? 'on' : 'off');
   document.getElementById('conn-text').textContent = msg;
 }
 
