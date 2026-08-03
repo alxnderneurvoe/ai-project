@@ -3,560 +3,329 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manifest — SN Scanner</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>SN Scanner — IT Asset</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-  :root{
-    --bg:#0B0F13;
-    --surface:#12181E;
-    --surface-2:#1B232B;
-    --border:#28323C;
-    --text:#EDF2F7;
-    --muted:#8B98A5;
-    --laser:#FF4438;
-    --ok:#2DD4BF;
-    --warn:#F5A623;
+  :root {
+    --ink: #16211a;
+    --paper: #f6f7f4;
+    --line: #d9ddd3;
+    --accent: #1f6d4c;
+    --accent-dim: #e4efe8;
+    --danger: #b3432c;
+    --danger-dim: #f6e6e1;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    padding:28px 20px 60px;
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
   }
-  .wrap{max-width:960px;margin:0 auto;}
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+  h1 { font-size: 19px; margin: 0; letter-spacing: -0.01em; }
+  .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #5a6259; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #999; flex-shrink: 0; }
+  .dot.on { background: var(--accent); }
+  .dot.off { background: var(--danger); }
+  .sub { font-size: 13px; color: #5a6259; margin: 0 0 18px; }
 
-  header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    margin-bottom:22px;
-    border-bottom:1px solid var(--border);
-    padding-bottom:16px;
-    flex-wrap:wrap;
-    gap:12px;
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
   }
-  .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    color:var(--laser);
-    margin:0 0 6px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block;}
-  .dot.on{background:var(--ok);box-shadow:0 0 6px var(--ok);}
-  .dot.off{background:var(--laser);}
-  h1{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:26px;
-    font-weight:600;
-    margin:0;
-    letter-spacing:-0.01em;
-  }
-  .count-badge{
-    font-family:'IBM Plex Mono',monospace;
-    text-align:right;
-  }
-  .count-badge .num{font-size:32px;font-weight:700;line-height:1;color:var(--ok);}
-  .count-badge .lbl{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+  .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #5a6259; margin: 0 0 10px; }
+  details.card summary { cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #5a6259; }
 
-  .setup-banner{
-    background:var(--surface-2);
-    border:1px solid var(--warn);
-    border-radius:8px;
-    padding:12px 14px;
-    margin-bottom:18px;
-    font-size:13px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    flex-wrap:wrap;
+  label { font-size: 12.5px; color: #45503f; display: block; margin-bottom: 3px; }
+  input[type=text], input[type=url] {
+    width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px;
+    font-size: 14px; background: var(--paper); color: var(--ink); margin-bottom: 10px;
   }
-  .setup-banner b{color:var(--warn);}
-  .setup-banner input{
-    flex:1;min-width:220px;
-    background:var(--bg);
-    border:1px solid var(--border);
-    border-radius:6px;
-    padding:8px 10px;
-    color:var(--text);
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
-  .grid{display:grid;grid-template-columns:1fr;gap:20px;}
-  @media(min-width:760px){ .grid{grid-template-columns: 360px 1fr;} }
+  button {
+    font-size: 13.5px; font-weight: 600; border-radius: 7px; border: 1px solid transparent;
+    padding: 9px 14px; cursor: pointer; transition: opacity .15s;
+  }
+  button:hover { opacity: .85; }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--accent-dim); color: var(--accent); }
+  .btn-ghost { background: transparent; color: #45503f; border-color: var(--line); }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .panel{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:16px;
-  }
-  .panel h2{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin:0 0 12px;
-  }
+  #reader { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
 
-  label.field-label{
-    display:block;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:6px;
-  }
-  input.who-input{
-    width:100%;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-    border-radius:7px;
-    padding:9px 11px;
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    margin-bottom:14px;
-  }
-  input.who-input:focus{outline:none;border-color:var(--laser);}
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #5a6259; font-weight: 600; }
+  td.sn { font-family: var(--mono); font-weight: 600; }
+  td.listing { font-family: var(--mono); font-size: 12px; color: #45503f; }
+  .empty { text-align: center; color: #8a917f; padding: 24px 0; font-size: 13px; }
+  .badge { font-size: 10.5px; padding: 2px 7px; border-radius: 20px; background: var(--accent-dim); color: var(--accent); }
 
-  /* Scanner */
-  .viewfinder{
-    position:relative;
-    width:100%;
-    aspect-ratio: 1 / 1;
-    background:#000;
-    border-radius:8px;
-    overflow:hidden;
-    border:1px solid var(--border);
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px;
+    font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+    max-width: 88vw; text-align: center;
   }
-  #reader{width:100%;height:100%;}
-  #reader video{object-fit:cover;width:100%!important;height:100%!important;}
-  .scan-frame{
-    position:absolute;
-    inset:14%;
-    border:2px solid rgba(255,68,56,.55);
-    border-radius:6px;
-    pointer-events:none;
-    box-shadow: 0 0 0 999px rgba(0,0,0,.35);
-  }
-  .laser-line{
-    position:absolute;
-    left:14%;right:14%;
-    height:2px;
-    background:linear-gradient(90deg, transparent, var(--laser) 20%, var(--laser) 80%, transparent);
-    box-shadow:0 0 8px 1px var(--laser);
-    top:14%;
-    animation: sweep 2.2s ease-in-out infinite;
-    pointer-events:none;
-  }
-  @keyframes sweep{
-    0%,100%{top:14%;}
-    50%{top:82%;}
-  }
-  .flash{
-    position:absolute;inset:0;
-    background:var(--ok);
-    opacity:0;
-    pointer-events:none;
-  }
-  .flash.active{animation:flashpop .35s ease-out;}
-  @keyframes flashpop{
-    0%{opacity:.55;}
-    100%{opacity:0;}
-  }
-  .cam-off{
-    position:absolute;inset:0;
-    display:flex;align-items:center;justify-content:center;
-    flex-direction:column;gap:10px;
-    color:var(--muted);
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    text-align:center;
-    padding:20px;
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+  .toast.danger { background: var(--danger); }
 
-  .scan-controls{display:flex;gap:8px;margin-top:12px;}
-  button{
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    font-weight:600;
-    border-radius:7px;
-    border:1px solid var(--border);
-    padding:10px 14px;
-    cursor:pointer;
-    background:var(--surface-2);
-    color:var(--text);
-    transition:.15s ease;
+  .modal-bg {
+    display: none; position: fixed; inset: 0; background: rgba(22,33,26,.45);
+    align-items: center; justify-content: center; z-index: 10;
   }
-  button:hover{border-color:var(--laser);}
-  button.primary{background:var(--laser);border-color:var(--laser);color:#fff;}
-  button.primary:hover{filter:brightness(1.08);}
-  button:disabled{opacity:.4;cursor:not-allowed;}
-  button.ghost{background:transparent;}
-  .full{width:100%;}
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 12px; padding: 22px; text-align: center; width: 260px;
+  }
+  .modal .sn-label { font-family: var(--mono); font-weight: 700; font-size: 15px; margin: 12px 0 2px; }
+  .modal .listing-label { font-family: var(--mono); font-size: 11.5px; color: #5a6259; margin-bottom: 14px; }
+  #qr-render { display: flex; justify-content: center; }
 
-  .manual-row{display:flex;gap:8px;margin-top:14px;}
-  .manual-row input{
-    flex:1;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-    border-radius:7px;
-    padding:10px 12px;
-    color:var(--text);
-    font-family:'IBM Plex Mono',monospace;
-    font-size:13px;
+  @media print {
+    body * { visibility: hidden; }
+    #print-area, #print-area * { visibility: visible; }
+    #print-area { position: fixed; top: 40px; left: 0; right: 0; text-align: center; }
   }
-  .manual-row input:focus{outline:none;border-color:var(--laser);}
-
-  .last-scan{
-    margin-top:14px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:var(--muted);
-    min-height:16px;
-  }
-  .last-scan b{color:var(--ok);}
-  .last-scan.err{color:var(--warn);}
-
-  /* Manifest / table */
-  .manifest-head{
-    display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;
-    gap:8px;flex-wrap:wrap;
-  }
-  .manifest-head .btns{display:flex;gap:8px;}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  thead th{
-    text-align:left;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--muted);
-    border-bottom:1px solid var(--border);
-    padding:0 8px 8px;
-  }
-  tbody td{
-    padding:9px 8px;
-    border-bottom:1px dashed var(--border);
-    vertical-align:middle;
-  }
-  tbody tr:hover{background:rgba(255,255,255,.02);}
-  td.sn{font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.02em;}
-  td.idx{color:var(--muted);font-family:'IBM Plex Mono',monospace;width:32px;}
-  td.by{color:var(--muted);font-size:12px;}
-  td.ts{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11.5px;white-space:nowrap;}
-  .empty-row td{
-    text-align:center;color:var(--muted);
-    font-family:'IBM Plex Mono',monospace;
-    padding:34px 8px;
-  }
-  .toast-dup{ color:var(--warn); }
-  .spin{
-    display:inline-block;width:11px;height:11px;border-radius:50%;
-    border:2px solid var(--border);border-top-color:var(--laser);
-    animation:spin .7s linear infinite;vertical-align:-1px;margin-right:6px;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div>
-      <p class="eyebrow"><span class="dot off" id="syncDot"></span>SN SCANNER — TIM</p>
-      <h1>Manifest Aset</h1>
-    </div>
-    <div class="count-badge">
-      <div class="num" id="countNum">0</div>
-      <div class="lbl">Terdaftar</div>
-    </div>
+    <h1>SN Scanner</h1>
+    <div class="status"><span class="dot" id="conn-dot"></span><span id="conn-text">Memeriksa koneksi…</span></div>
   </header>
+  <p class="sub">Scan barcode/QR SN perangkat — tersimpan otomatis ke Sheet lewat n8n, kode listing dibuat otomatis.</p>
 
-  <div class="setup-banner" id="setupBanner">
-    <span><b>Setup diperlukan:</b> tempel URL Apps Script (diakhiri /exec) supaya data tersambung ke Google Sheets tim.</span>
-    <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
-    <button id="saveUrlBtn">Simpan</button>
+  <details class="card" id="setup-card">
+    <summary>Sambungan n8n (klik untuk ubah)</summary>
+    <div style="margin-top:12px;">
+      <label for="scan-url">URL Webhook — Terima Scan (POST)</label>
+      <input type="url" id="scan-url" placeholder="https://your-n8n.app/webhook/scan-sn">
+      <label for="list-url">URL Webhook — Ambil List (GET)</label>
+      <input type="url" id="list-url" placeholder="https://your-n8n.app/webhook/list-sn">
+      <button class="btn-primary" id="save-config">Simpan</button>
+    </div>
+  </details>
+
+  <div class="card">
+    <h2>Scan</h2>
+    <div id="reader"></div>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn-primary" id="start-scan">Mulai Scan</button>
+      <button class="btn-ghost" id="stop-scan" style="display:none;">Stop</button>
+    </div>
+    <label for="manual-sn">Input manual (kalau barcode tidak terbaca)</label>
+    <input type="text" id="manual-sn" placeholder="Ketik SN lalu Enter">
+    <label for="team-name">Name</label>
+    <input type="text" id="team-name" placeholder="GTGH C++" value="GTGH C++">
   </div>
 
-  <div class="grid">
-    <div class="panel">
-      <h2>Kamera</h2>
-
-      <label class="field-label">Nama kamu</label>
-      <input type="text" class="who-input" id="whoInput" placeholder="mis. Budi — IT Support">
-
-      <div class="viewfinder">
-        <div id="reader"></div>
-        <div class="flash" id="flash"></div>
-        <div class="scan-frame" id="scanFrame" style="display:none">
-          <div class="laser-line"></div>
-        </div>
-        <div class="cam-off" id="camOff">
-          Kamera belum aktif.<br>Tekan "Mulai Scan" untuk arahkan ke barcode SN.
-        </div>
-      </div>
-      <div class="scan-controls">
-        <button class="primary full" id="toggleScan">Mulai Scan</button>
-      </div>
-      <div class="last-scan" id="lastScan"></div>
-
-      <div class="manual-row">
-        <input type="text" id="manualInput" placeholder="atau ketik SN manual...">
-        <button id="manualAdd">Tambah</button>
-      </div>
+  <div class="card">
+    <h2>Daftar Perangkat <span class="badge" id="count-badge">0</span></h2>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn-ghost" id="refresh-btn">Refresh</button>
+      <button class="btn-secondary" id="qr-btn" disabled>Generate QR</button>
+      <button class="btn-ghost" id="export-btn">Export CSV</button>
     </div>
+    <table>
+      <thead><tr><th></th><th>SN</th><th>Listing</th><th>Name</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty-msg">Belum ada data.</div>
+  </div>
 
-    <div class="panel">
-      <div class="manifest-head">
-        <h2>Daftar Perangkat <span id="syncStatus" style="text-transform:none;color:var(--muted);font-weight:400;"></span></h2>
-        <div class="btns">
-          <button class="ghost" id="refreshBtn">Refresh</button>
-          <button class="ghost" id="exportBtn">Export CSV</button>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Serial Number</th>
-            <th>Nama Perangkat</th>
-            <th>Oleh</th>
-            <th>Waktu</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr class="empty-row"><td colspan="5">Belum ada perangkat di-scan</td></tr>
-        </tbody>
-      </table>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-bg" id="qr-modal">
+  <div class="modal">
+    <div id="print-area">
+      <div id="qr-render"></div>
+      <div class="sn-label" id="qr-sn-label"></div>
+      <div class="listing-label" id="qr-listing-label"></div>
+    </div>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn-primary" onclick="window.print()">Print</button>
+      <button class="btn-ghost" id="qr-close">Tutup</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ========= SETUP: tempel URL Apps Script kamu di sini (opsional,
-   bisa juga diisi lewat kolom di atas — tersimpan otomatis per device) ========= */
-const DEFAULT_SCRIPT_URL = ""; // contoh: "https://script.google.com/macros/s/AKfycb.../exec"
+// URL webhook sudah diisi otomatis, tapi tetap tersimpan/bisa diubah lewat kolom "Sambungan n8n"
+const DEFAULT_SCAN_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/scan-sn';
+const DEFAULT_LIST_URL = 'https://n8n.alxnderneurvoe.xyz/webhook/list-sn';
 
-let items = [];
-let scanning = false;
+let scanUrl = localStorage.getItem('sn_scan_url') || DEFAULT_SCAN_URL;
+let listUrl = localStorage.getItem('sn_list_url') || DEFAULT_LIST_URL;
+document.getElementById('scan-url').value = scanUrl;
+document.getElementById('list-url').value = listUrl;
+
+let entries = [];      // {sn, name, listing, timestamp}
+let selectedSn = null;
 let html5QrCode = null;
-let SCRIPT_URL = localStorage.getItem('sn_scanner_url') || DEFAULT_SCRIPT_URL;
-let WHO = localStorage.getItem('sn_scanner_who') || '';
 
-const tbody = document.getElementById('tbody');
-const countNum = document.getElementById('countNum');
-const lastScan = document.getElementById('lastScan');
-const flashEl = document.getElementById('flash');
-const camOff = document.getElementById('camOff');
-const scanFrame = document.getElementById('scanFrame');
-const toggleBtn = document.getElementById('toggleScan');
-const setupBanner = document.getElementById('setupBanner');
-const scriptUrlInput = document.getElementById('scriptUrlInput');
-const whoInput = document.getElementById('whoInput');
-const syncDot = document.getElementById('syncDot');
-const syncStatus = document.getElementById('syncStatus');
-const manualBtn = document.getElementById('manualAdd');
+const rowsEl = document.getElementById('rows');
+const emptyMsg = document.getElementById('empty-msg');
+const countBadge = document.getElementById('count-badge');
+const qrBtn = document.getElementById('qr-btn');
 
-whoInput.value = WHO;
-if (SCRIPT_URL) { scriptUrlInput.value = SCRIPT_URL; setupBanner.style.display = 'none'; }
-
-whoInput.addEventListener('input', () => {
-  WHO = whoInput.value;
-  localStorage.setItem('sn_scanner_who', WHO);
-});
-
-document.getElementById('saveUrlBtn').addEventListener('click', () => {
-  const v = scriptUrlInput.value.trim();
-  if (!v) return;
-  SCRIPT_URL = v;
-  localStorage.setItem('sn_scanner_url', v);
-  setupBanner.style.display = 'none';
-  loadFromSheet();
-});
-
-function render(){
-  countNum.textContent = items.length;
-  if(items.length === 0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Belum ada perangkat di-scan</td></tr>';
-    return;
-  }
-  tbody.innerHTML = items.map((it, i) => `
-    <tr>
-      <td class="idx">${String(i+1).padStart(2,'0')}</td>
-      <td class="sn">${escapeHtml(it.sn)}</td>
-      <td>${escapeHtml(it.name) || '<span style=\"color:var(--muted)\">—</span>'}</td>
-      <td class="by">${escapeHtml(it.addedBy) || '—'}</td>
-      <td class="ts">${escapeHtml(it.ts)}</td>
-    </tr>
-  `).join('');
+function toast(msg, danger) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (danger ? ' danger' : '');
+  setTimeout(() => t.className = 'toast', 2800);
 }
 
-function escapeHtml(s){
-  return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function setConn(ok, msg) {
+  document.getElementById('conn-dot').className = 'dot ' + (ok ? 'on' : 'off');
+  document.getElementById('conn-text').textContent = msg;
 }
 
-function nowStamp(){
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  return `${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+document.getElementById('save-config').onclick = () => {
+  scanUrl = document.getElementById('scan-url').value.trim();
+  listUrl = document.getElementById('list-url').value.trim();
+  localStorage.setItem('sn_scan_url', scanUrl);
+  localStorage.setItem('sn_list_url', listUrl);
+  toast('Konfigurasi disimpan');
+  loadList();
+};
+
+function render() {
+  rowsEl.innerHTML = '';
+  countBadge.textContent = entries.length;
+  emptyMsg.style.display = entries.length ? 'none' : 'block';
+  entries.forEach((e) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="radio" name="sel" data-sn="${e.sn}"></td>
+      <td class="sn">${e.sn}</td>
+      <td class="listing">${e.listing || '—'}</td>
+      <td>${e.name || '—'}</td>`;
+    rowsEl.appendChild(tr);
+  });
+  rowsEl.querySelectorAll('input[type=radio]').forEach(r => {
+    r.onchange = () => { selectedSn = r.dataset.sn; qrBtn.disabled = false; };
+  });
 }
 
-function setSyncState(state){
-  // state: 'ok' | 'off' | 'busy'
-  syncDot.className = 'dot ' + (state === 'ok' ? 'on' : state === 'busy' ? '' : 'off');
-  syncStatus.innerHTML = state === 'busy' ? '<span class="spin"></span>menyinkronkan...' :
-    state === 'ok' ? '· tersambung Google Sheets' :
-    SCRIPT_URL ? '· gagal sinkron' : '· belum diset up';
-}
-
-async function loadFromSheet(){
-  if(!SCRIPT_URL) { setSyncState('off'); return; }
-  setSyncState('busy');
-  try{
-    const res = await fetch(SCRIPT_URL, { method: 'GET' });
+async function loadList() {
+  if (!listUrl) { setConn(false, 'URL list belum diisi'); return; }
+  try {
+    const res = await fetch(listUrl);
+    if (!res.ok) throw new Error('bad status');
     const data = await res.json();
-    if(data.ok){
-      items = data.items.slice().reverse(); // newest first
-      render();
-      setSyncState('ok');
-    } else {
-      setSyncState('off');
-    }
-  }catch(err){
-    setSyncState('off');
+    entries = (Array.isArray(data) ? data : []).map(d => ({
+      sn: d.sn, name: d.name, listing: d.listing, timestamp: d.timestamp
+    })).filter(e => e.sn);
+    render();
+    setConn(true, 'Terhubung ke n8n');
+  } catch (err) {
+    setConn(false, 'Gagal terhubung ke n8n');
   }
 }
 
-async function addSN(sn){
-  sn = sn.trim();
-  if(!sn) return;
-
-  const existsLocal = items.some(x => x.sn.toLowerCase() === sn.toLowerCase());
-  if(existsLocal){
-    lastScan.innerHTML = `<span class="toast-dup">⚠ SN "${escapeHtml(sn)}" sudah ada di daftar</span>`;
+async function submitSn(sn) {
+  sn = (sn || '').trim();
+  if (!sn) return;
+  if (entries.some(e => e.sn === sn)) {
+    toast('SN "' + sn + '" sudah ada di daftar', true);
     return;
   }
-
-  const payload = { sn, name: '', ts: nowStamp(), addedBy: WHO };
-
-  if(!SCRIPT_URL){
-    // fallback: simpan lokal saja kalau belum di-setup
-    items.unshift({ ...payload });
-    lastScan.innerHTML = `Ditambahkan (lokal, belum sinkron): <b>${escapeHtml(sn)}</b>`;
-    triggerFlash();
-    render();
-    return;
-  }
-
-  setSyncState('busy');
-  try{
-    const res = await fetch(SCRIPT_URL, {
+  if (!scanUrl) { toast('Isi URL webhook scan dulu', true); return; }
+  const payload = {
+    sn,
+    name: document.getElementById('team-name').value.trim()
+  };
+  try {
+    const res = await fetch(scanUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    if(data.ok){
-      items.unshift(payload);
-      lastScan.innerHTML = `Ditambahkan: <b>${escapeHtml(sn)}</b>`;
-      triggerFlash();
-      render();
-      setSyncState('ok');
-    } else if (data.error === 'duplicate'){
-      lastScan.innerHTML = `<span class="toast-dup">⚠ SN "${escapeHtml(sn)}" sudah terdaftar di Sheets</span>`;
-      setSyncState('ok');
+    if (data.status === 'duplicate') {
+      toast('SN sudah pernah discan sebelumnya', true);
     } else {
-      lastScan.innerHTML = `<span class="toast-dup">Gagal simpan: ${escapeHtml(data.message || 'error')}</span>`;
-      setSyncState('off');
+      entries.push({ ...payload, listing: data.listing, timestamp: new Date().toISOString() });
+      render();
+      toast('Tersimpan — Listing: ' + (data.listing || '-'));
     }
-  }catch(err){
-    lastScan.innerHTML = `<span class="toast-dup">Gagal terhubung ke Sheets. Cek koneksi / URL.</span>`;
-    setSyncState('off');
+  } catch (err) {
+    toast('Gagal kirim ke n8n — cek koneksi', true);
   }
 }
 
-function triggerFlash(){
-  flashEl.classList.remove('active');
-  void flashEl.offsetWidth;
-  flashEl.classList.add('active');
-}
-
-async function startScan(){
-  if(scanning) return;
-  camOff.style.display = 'none';
-  scanFrame.style.display = 'block';
-  html5QrCode = new Html5Qrcode("reader");
-  const config = { fps: 10, qrbox: { width: 220, height: 220 } };
-  try{
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      config,
-      (decodedText) => { addSN(decodedText); },
-      () => {}
-    );
-    scanning = true;
-    toggleBtn.textContent = 'Hentikan Scan';
-  }catch(err){
-    camOff.style.display = 'flex';
-    scanFrame.style.display = 'none';
-    camOff.textContent = 'Kamera tidak bisa diakses. Cek izin kamera browser, atau gunakan input manual di bawah.';
+document.getElementById('manual-sn').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    submitSn(e.target.value);
+    e.target.value = '';
   }
-}
-
-async function stopScan(){
-  if(!scanning || !html5QrCode) return;
-  try{ await html5QrCode.stop(); await html5QrCode.clear(); }catch(e){}
-  scanning = false;
-  toggleBtn.textContent = 'Mulai Scan';
-  camOff.style.display = 'flex';
-  camOff.textContent = 'Kamera belum aktif. Tekan "Mulai Scan" untuk arahkan ke barcode SN.';
-  scanFrame.style.display = 'none';
-}
-
-toggleBtn.addEventListener('click', () => { scanning ? stopScan() : startScan(); });
-
-manualBtn.addEventListener('click', () => {
-  const inp = document.getElementById('manualInput');
-  addSN(inp.value);
-  inp.value = '';
-  inp.focus();
 });
-document.getElementById('manualInput').addEventListener('keydown', e => {
-  if(e.key === 'Enter'){ addSN(e.target.value); e.target.value = ''; }
-});
-document.getElementById('refreshBtn').addEventListener('click', loadFromSheet);
 
-document.getElementById('exportBtn').addEventListener('click', () => {
-  if(items.length === 0) return;
-  const header = ['No','Serial Number','Nama Perangkat','Ditambahkan Oleh','Waktu'];
-  const rows = items.map((it,i) => [i+1, it.sn, it.name, it.addedBy, it.ts]);
-  const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+document.getElementById('start-scan').onclick = () => {
+  document.getElementById('start-scan').style.display = 'none';
+  document.getElementById('stop-scan').style.display = 'inline-block';
+  html5QrCode = new Html5Qrcode('reader');
+  html5QrCode.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 260, height: 140 } },
+    (decodedText) => {
+      submitSn(decodedText);
+    },
+    () => {}
+  ).catch(() => {
+    toast('Kamera tidak bisa diakses — pastikan buka lewat HTTPS', true);
+    document.getElementById('start-scan').style.display = 'inline-block';
+    document.getElementById('stop-scan').style.display = 'none';
+  });
+};
+
+document.getElementById('stop-scan').onclick = () => {
+  if (html5QrCode) html5QrCode.stop();
+  document.getElementById('start-scan').style.display = 'inline-block';
+  document.getElementById('stop-scan').style.display = 'none';
+};
+
+document.getElementById('refresh-btn').onclick = loadList;
+
+document.getElementById('export-btn').onclick = () => {
+  const rows = [['SN', 'Listing', 'Name', 'Timestamp'], ...entries.map(e => [e.sn, e.listing, e.name, e.timestamp])];
+  const csv = rows.map(r => r.map(c => `"${(c || '').toString().replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `daftar-perangkat-${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = URL.createObjectURL(blob);
+  a.download = 'daftar-sn.csv';
   a.click();
-  URL.revokeObjectURL(url);
-});
+};
 
-render();
-loadFromSheet();
+qrBtn.onclick = () => {
+  if (!selectedSn) return;
+  const entry = entries.find(e => e.sn === selectedSn);
+  const render_ = document.getElementById('qr-render');
+  render_.innerHTML = '';
+  new QRCode(render_, { text: selectedSn, width: 160, height: 160 });
+  document.getElementById('qr-sn-label').textContent = selectedSn;
+  document.getElementById('qr-listing-label').textContent = entry ? (entry.listing || '') : '';
+  document.getElementById('qr-modal').classList.add('show');
+};
+document.getElementById('qr-close').onclick = () => document.getElementById('qr-modal').classList.remove('show');
+
+loadList();
 </script>
 </body>
 </html>
