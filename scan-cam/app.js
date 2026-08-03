@@ -99,6 +99,7 @@ listingSelect.onchange = () => {
 
 document.getElementById('cancel-btn').onclick = () => {
   scanLocked = true;
+  stopAutoZoom();
   if (html5QrCode) { html5QrCode.stop().catch(() => {}); }
   document.getElementById('start-scan').style.display = 'inline-block';
   document.getElementById('stop-scan').style.display = 'none';
@@ -125,6 +126,7 @@ document.getElementById('start-scan').onclick = () => {
     (decodedText) => {
       if (scanLocked) return;
       scanLocked = true;
+      stopAutoZoom();
       document.getElementById('sn-input').value = decodedText;
       document.getElementById('start-scan').style.display = 'inline-block';
       document.getElementById('stop-scan').style.display = 'none';
@@ -133,7 +135,7 @@ document.getElementById('start-scan').onclick = () => {
     },
     () => {}
   ).then(() => {
-    applyCameraZoom(2); // coba zoom optik 2x kalau device support; kalau tidak, fallback CSS zoom
+    startAutoZoom();
   }).catch(() => {
     toast('Kamera tidak bisa diakses — pastikan buka lewat HTTPS', true);
     document.getElementById('start-scan').style.display = 'inline-block';
@@ -141,25 +143,46 @@ document.getElementById('start-scan').onclick = () => {
   });
 };
 
-// Coba pakai kemampuan zoom optik kamera (Chrome Android mendukung ini).
-// Kalau device/browser tidak support, pakai zoom digital lewat CSS transform sebagai fallback.
-function applyCameraZoom(desiredZoom) {
-  try {
-    const videoEl = document.querySelector('#reader video');
-    if (!videoEl || !videoEl.srcObject) return;
-    const track = videoEl.srcObject.getVideoTracks()[0];
-    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-    if (capabilities.zoom) {
-      const zoom = Math.min(desiredZoom, capabilities.zoom.max || desiredZoom);
-      track.applyConstraints({ advanced: [{ zoom }] })
-        .then(() => console.log('[sn-scanner] zoom optik diterapkan:', zoom))
-        .catch(() => applyCssZoom(videoEl, desiredZoom));
-    } else {
-      applyCssZoom(videoEl, desiredZoom);
-    }
-  } catch (err) {
-    console.warn('[sn-scanner] zoom tidak didukung, pakai CSS zoom fallback', err);
+// ====== Auto-zoom: naik bertahap sampai barcode kebaca, lalu ulang siklus kalau belum ketemu ======
+let zoomTimer = null;
+let zoomStepIndex = 0;
+let zoomSteps = [1, 1.5, 2, 2.5, 3]; // dipakai untuk CSS fallback; utk zoom optik disesuaikan ke capability device
+
+function startAutoZoom() {
+  stopAutoZoom();
+  zoomStepIndex = 0;
+
+  const videoEl = document.querySelector('#reader video');
+  if (!videoEl || !videoEl.srcObject) return;
+  const track = videoEl.srcObject.getVideoTracks()[0];
+  const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+
+  let opticalSteps = null;
+  if (capabilities.zoom) {
+    const min = capabilities.zoom.min ?? 1;
+    const max = capabilities.zoom.max ?? min;
+    opticalSteps = [0, 0.25, 0.5, 0.75, 1].map(f => min + (max - min) * f);
+    console.log('[sn-scanner] auto-zoom pakai zoom optik, range:', min, '-', max);
+  } else {
+    console.log('[sn-scanner] auto-zoom pakai fallback CSS scale (device tidak dukung zoom optik)');
   }
+
+  const applyStep = () => {
+    if (opticalSteps) {
+      const z = opticalSteps[zoomStepIndex % opticalSteps.length];
+      track.applyConstraints({ advanced: [{ zoom: z }] }).catch(() => {});
+    } else {
+      applyCssZoom(videoEl, zoomSteps[zoomStepIndex % zoomSteps.length]);
+    }
+    zoomStepIndex++;
+  };
+
+  applyStep(); // langsung mulai dari step pertama
+  zoomTimer = setInterval(applyStep, 1500);
+}
+
+function stopAutoZoom() {
+  if (zoomTimer) { clearInterval(zoomTimer); zoomTimer = null; }
 }
 
 function applyCssZoom(videoEl, scale) {
@@ -169,6 +192,7 @@ function applyCssZoom(videoEl, scale) {
 
 document.getElementById('stop-scan').onclick = () => {
   scanLocked = true;
+  stopAutoZoom();
   if (html5QrCode) html5QrCode.stop().catch(() => {});
   document.getElementById('start-scan').style.display = 'inline-block';
   document.getElementById('stop-scan').style.display = 'none';
