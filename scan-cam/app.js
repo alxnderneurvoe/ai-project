@@ -161,16 +161,23 @@ let currentZoom = 1;
 document.querySelectorAll('.btn-zoom').forEach(btn => {
   btn.onclick = () => {
     const z = parseFloat(btn.dataset.zoom);
+    console.log('[sn-scanner] tombol zoom diklik:', z + 'x');
     currentZoom = z;
     document.querySelectorAll('.btn-zoom').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    applyZoom(z);
+    const applied = applyZoom(z);
+    if (!applied) {
+      toast('Zoom diset ' + z + 'x — akan aktif saat kamera dimulai');
+    }
   };
 });
 
 function applyZoom(zoomValue) {
   const videoEl = document.querySelector('#reader video');
-  if (!videoEl || !videoEl.srcObject) return; // kamera belum nyala, nilai tersimpan & dipakai saat start
+  if (!videoEl || !videoEl.srcObject) {
+    console.log('[sn-scanner] applyZoom: video belum aktif, nilai disimpan untuk nanti');
+    return false; // kamera belum nyala, nilai tersimpan & dipakai saat start
+  }
 
   let track = null;
   try {
@@ -184,23 +191,26 @@ function applyZoom(zoomValue) {
   } catch (err) {
     capabilities = {};
   }
+  console.log('[sn-scanner] applyZoom: capabilities kamera =', capabilities);
 
   if (capabilities.zoom && track.applyConstraints) {
     // Zoom optik asli (Chrome Android biasanya support) — clamp ke batas kemampuan device.
     const z = Math.min(zoomValue, capabilities.zoom.max || zoomValue);
     track.applyConstraints({ advanced: [{ zoom: z }] })
       .then(() => console.log('[sn-scanner] zoom optik diterapkan:', z))
-      .catch(() => applyCssZoom(videoEl, zoomValue));
+      .catch((err) => { console.warn('[sn-scanner] zoom optik gagal, fallback CSS:', err); applyCssZoom(videoEl, zoomValue); });
   } else {
     // Fallback zoom digital (CSS scale) — selalu jalan, termasuk di Safari iOS.
     console.log('[sn-scanner] pakai CSS zoom fallback:', zoomValue + 'x');
     applyCssZoom(videoEl, zoomValue);
   }
+  return true;
 }
 
 function applyCssZoom(videoEl, scale) {
-  videoEl.style.transform = `scale(${scale})`;
   videoEl.style.transformOrigin = 'center center';
+  videoEl.style.transform = `scale(${scale})`;
+  console.log('[sn-scanner] CSS transform diterapkan ke video:', videoEl.style.transform);
 }
 
 document.getElementById('stop-scan').onclick = () => {
@@ -210,10 +220,23 @@ document.getElementById('stop-scan').onclick = () => {
   document.getElementById('stop-scan').style.display = 'none';
 };
 
+function showLoading(text) {
+  document.getElementById('loading-text').textContent = text || 'Memproses…';
+  document.getElementById('loading-overlay').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.remove('show');
+}
+
 document.getElementById('submit-btn').onclick = async () => {
   const sn = document.getElementById('sn-input').value.trim();
   if (!sn) { toast('Isi/scan SN dulu', true); return; }
   if (!selectedListing) { toast('Pilih listing dulu', true); return; }
+
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.disabled = true;
+  showLoading('Menyimpan SN…');
   try {
     const res = await fetch(SCAN_URL, {
       method: 'POST',
@@ -222,6 +245,7 @@ document.getElementById('submit-btn').onclick = async () => {
     });
     const data = await res.json();
     if (data.status === 'ok') {
+      showLoading('Memuat ulang data…');
       toast('SN tersimpan untuk ' + selectedListing);
       scanCard.style.display = 'none';
       listingSelect.value = '';
@@ -231,6 +255,9 @@ document.getElementById('submit-btn').onclick = async () => {
     }
   } catch (err) {
     toast('Gagal kirim ke n8n — cek koneksi', true);
+  } finally {
+    hideLoading();
+    submitBtn.disabled = false;
   }
 };
 

@@ -248,3 +248,47 @@ td.sn {
   background: var(--danger-dim);
   color: var(--danger);
 }
+
+.loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 33, 26, .5);
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.loading-overlay.show {
+  display: flex;
+}
+
+.loading-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 26px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid var(--accent-dim);
+  border-top-color: var(--accent);
+  animation: spin .8s linear infinite;
+}
+
+.loading-text {
+  font-size: 13px;
+  color: #45503f;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
