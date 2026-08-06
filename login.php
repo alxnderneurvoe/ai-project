@@ -65,17 +65,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form method="POST" class="login-form">
                     <div class="login-form-group">
                         <label for="username">Username</label>
-                        <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+                        <input type="text" name="username" id="username" class="form-control"
+                            placeholder="Enter your username" required>
                     </div>
                     <div class="login-form-group">
                         <label for="password">Password</label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+                        <input type="password" name="password" id="password" class="form-control"
+                            placeholder="Enter your password" required>
                     </div>
                     <div class="login-button-group">
                         <button type="submit" class="btn btn-login">
                             <i class="fas fa-right-to-bracket"></i>
                             Login
                         </button>
+                    </div>
+                    <div class="login-button-group">
+                        <button type="submit" class="btn btn-login">
+                            <i class="fas fa-right-to-bracket"></i>
+                            Login
+                        </button>
+                        <a href="apps.php" class="btn btn-download-apps">
+                            <i class="fas fa-cloud-arrow-down"></i>
+                            Download Apps
+                        </a>
                     </div>
                 </form>
             </div>
