@@ -11,7 +11,7 @@
     --text-primary: #f9fafb;
     --text-secondary: #9ca3af;
     --text-muted: #6b7280;
-    
+
     /* Branding Accent Colors */
     --color-indigo: #6366f1;
     --color-indigo-hover: #4f46e5;
@@ -48,13 +48,16 @@ body {
     width: 8px;
     height: 8px;
 }
+
 ::-webkit-scrollbar-track {
     background: var(--bg-main);
 }
+
 ::-webkit-scrollbar-thumb {
     background: #1f2937;
     border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #374151;
 }
@@ -87,7 +90,8 @@ body {
 }
 
 .navbar-brand::before {
-    content: "\f56e"; /* FontAwesome laptop icon */
+    content: "\f56e";
+    /* FontAwesome laptop icon */
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     margin-right: 0.6rem;
@@ -307,12 +311,32 @@ body {
    UTILITY CLASSES
    ======================================== */
 
-.text-indigo { color: #818cf8 !important; }
-.bg-indigo { background-color: var(--color-indigo) !important; }
-.bg-indigo-subtle { background-color: rgba(99, 102, 241, 0.1) !important; }
-.bg-success-subtle { background-color: rgba(16, 185, 129, 0.1) !important; color: #34d399 !important; }
-.bg-secondary-subtle { background-color: rgba(156, 163, 175, 0.1) !important; color: #9ca3af !important; }
-.bg-warning-subtle { background-color: rgba(245, 158, 11, 0.1) !important; color: #fbbf24 !important; }
+.text-indigo {
+    color: #818cf8 !important;
+}
+
+.bg-indigo {
+    background-color: var(--color-indigo) !important;
+}
+
+.bg-indigo-subtle {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+}
+
+.bg-success-subtle {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    color: #34d399 !important;
+}
+
+.bg-secondary-subtle {
+    background-color: rgba(156, 163, 175, 0.1) !important;
+    color: #9ca3af !important;
+}
+
+.bg-warning-subtle {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    color: #fbbf24 !important;
+}
 
 /* Animation */
 .animate-pulse {
@@ -320,8 +344,17 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.92); }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.4;
+        transform: scale(0.92);
+    }
 }
 
 /* ========================================
@@ -338,38 +371,47 @@ body {
     .navbar .navbar-brand {
         font-size: 1rem;
     }
+
     .navbar .nav-link {
         padding: 0.45rem 0.7rem !important;
     }
+
     .card-premium {
         border-radius: 12px;
     }
+
     .card-body {
         padding: 1.25rem !important;
     }
+
     .search-input-group {
         flex-wrap: wrap;
     }
+
     .search-input-group .form-control {
         min-width: 0;
     }
+
     .app-footer {
         padding: 1rem 0.75rem;
     }
 }
 
 @media (max-width: 575.98px) {
+
     .navbar .btn,
     .navbar-nav .logout-button {
         width: 100%;
         margin-top: 0.5rem;
     }
+
     .navbar-collapse {
         background-color: rgba(15, 23, 42, 0.98);
         margin-top: 0.5rem;
         border-radius: 12px;
         padding: 1rem;
     }
+
     .navbar-nav .nav-link {
         padding-left: 0 !important;
         padding-right: 0 !important;

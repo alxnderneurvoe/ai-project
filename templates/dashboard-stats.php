@@ -10,85 +10,85 @@
 </div>
 
 <!-- STATS CARDS -->
-<div class="row mb-4 g-3">
-    <div class="col-md-3 col-sm-6">
+<div class="row mb-4 g-3 dashboard-stats-grid">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="card card-stat card-stat-total filter-card" id="cardTotal" data-filter="all">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Total Devices</h6>
+            <div class="card-body">
+                <div class="stat-copy">
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">Total Devices</h6>
                     <h2 class="fw-bold text-white mb-0" id="totalDevice">0</h2>
                 </div>
-                <div class="stat-icon bg-indigo-subtle text-indigo rounded-3 p-3">
+                <div class="stat-icon bg-indigo-subtle text-indigo">
                     <i class="fas fa-boxes fa-2x"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3 col-sm-6">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="card card-stat card-stat-assigned filter-card" id="cardAssigned" data-filter="assigned">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Assigned</h6>
+            <div class="card-body">
+                <div class="stat-copy">
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">Assigned</h6>
                     <h2 class="fw-bold text-white mb-0" id="assignedDevice">0</h2>
                 </div>
-                <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
+                <div class="stat-icon bg-success-subtle text-success">
                     <i class="fas fa-user-check fa-2x"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3 col-sm-6">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="card card-stat card-stat-available filter-card" id="cardAvailable" data-filter="available">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Available</h6>
+            <div class="card-body">
+                <div class="stat-copy">
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">Available</h6>
                     <h2 class="fw-bold text-white mb-0" id="availableDevice">0</h2>
                 </div>
-                <div class="stat-icon bg-secondary-subtle text-white-50 rounded-3 p-3">
+                <div class="stat-icon bg-secondary-subtle text-white-50">
                     <i class="fas fa-check-circle fa-2x"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-2 col-md-4 col-sm-6">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="card card-stat card-stat-legacy filter-card" id="cardLegacy" data-filter="legacy">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Legacy</h6>
+            <div class="card-body">
+                <div class="stat-copy">
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">Legacy</h6>
                     <h2 class="fw-bold text-white mb-0" id="legacyDevice">0</h2>
                 </div>
-                <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
+                <div class="stat-icon bg-warning-subtle text-warning">
                     <i class="fas fa-archive fa-2x"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-2 col-md-4 col-sm-6">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="card card-stat card-stat-broken filter-card" id="cardBroken" data-filter="broken">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Broken</h6>
+            <div class="card-body">
+                <div class="stat-copy">
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">Broken</h6>
                     <h2 class="fw-bold text-white mb-0" id="brokenDevice">0</h2>
                 </div>
-                <div class="stat-icon bg-danger-subtle text-danger rounded-3 p-3">
+                <div class="stat-icon bg-danger-subtle text-danger">
                     <i class="fas fa-triangle-exclamation fa-2x"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-2 col-md-4 col-sm-6">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="card card-stat card-stat-service filter-card" id="cardService" data-filter="service">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">In Service</h6>
+            <div class="card-body">
+                <div class="stat-copy">
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">In Service</h6>
                     <h2 class="fw-bold text-white mb-0" id="serviceDevice">0</h2>
                 </div>
-                <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
+                <div class="stat-icon bg-warning-subtle text-warning">
                     <i class="fas fa-tools fa-2x"></i>
                 </div>
             </div>

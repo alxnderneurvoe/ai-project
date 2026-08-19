@@ -6,6 +6,14 @@
    STAT CARDS - Dashboard Page
    ======================================== */
 
+.dashboard-stats-grid {
+    align-items: stretch;
+}
+
+.dashboard-stats-grid > [class*='col-'] {
+    display: flex;
+}
+
 .card-stat {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -14,6 +22,10 @@
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
 }
 
 .card-stat:hover {
@@ -55,13 +67,42 @@
     background-color: var(--color-warning); 
 }
 
+.card-stat .card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.4rem 1.2rem;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+}
+
+.stat-copy {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-copy h6 {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.6rem;
+}
+
+.stat-copy h2 {
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
+    line-height: 1.1;
+}
+
 .stat-icon {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 52px;
     height: 52px;
+    min-width: 52px;
     border-radius: 12px;
+    flex-shrink: 0;
 }
 
 /* ========================================
@@ -138,7 +179,23 @@
    DASHBOARD RESPONSIVE STYLES
    ======================================== */
 
+@media (max-width: 991.98px) {
+    .dashboard-stats-grid > [class*='col-'] {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
 @media (max-width: 767.98px) {
+    .dashboard-stats-grid > [class*='col-'] {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .card-stat .card-body {
+        padding: 1.1rem 1rem;
+    }
+
     .table-premium thead th,
     .table-premium tbody td {
         padding: 0.75rem 0.5rem;
@@ -152,12 +209,17 @@
 }
 
 @media (max-width: 575.98px) {
+    .dashboard-stats-grid > [class*='col-'] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
     .card-stat .card-body {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
     }
     .card-stat .stat-icon {
-        margin-top: 1rem;
+        margin-top: 0;
     }
     
     .table-premium thead th,

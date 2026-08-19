@@ -1,20 +1,15 @@
 <?php
 session_start();
-
-/**
- * Require an authenticated session.
- */
-function require_login() {
+function require_login()
+{
     if (!isset($_SESSION['login'])) {
         header('Location: login.php');
         exit;
     }
 }
 
-/**
- * Require an authenticated session for API endpoints.
- */
-function require_api_login() {
+function require_api_login()
+{
     if (!isset($_SESSION['login'])) {
         http_response_code(401);
         header('Content-Type: application/json');
@@ -31,7 +26,8 @@ function require_api_login() {
  *
  * @return string
  */
-function current_user_role() {
+function current_user_role()
+{
     return $_SESSION['user_role'] ?? 'viewer';
 }
 
@@ -40,7 +36,8 @@ function current_user_role() {
  *
  * @param array $allowedRoles
  */
-function require_role(array $allowedRoles) {
+function require_role(array $allowedRoles)
+{
     require_login();
 
     if (!in_array(current_user_role(), $allowedRoles, true)) {
@@ -55,7 +52,8 @@ function require_role(array $allowedRoles) {
  *
  * @param array $allowedRoles
  */
-function require_api_role(array $allowedRoles) {
+function require_api_role(array $allowedRoles)
+{
     require_api_login();
 
     if (!in_array(current_user_role(), $allowedRoles, true)) {
