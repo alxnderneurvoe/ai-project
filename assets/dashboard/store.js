@@ -31,7 +31,7 @@ export class DeviceStore {
         const status = String(item.status || '').toLowerCase().trim();
 
         if (this.currentFilter === 'available') {
-            return ['available', 'legacy', 'broken'].includes(status);
+            return ['available'].includes(status);
         }
 
         return status === this.currentFilter;
@@ -64,6 +64,7 @@ export class DeviceStore {
             legacy: 0,
             broken: 0,
             service: 0,
+            missing: 0,
         };
 
         this.devices.forEach(item => {
@@ -76,11 +77,10 @@ export class DeviceStore {
             } else if (status === 'available') {
                 stats.available += 1;
             } else if (status === 'legacy') {
-                stats.available += 1;
                 stats.legacy += 1;
             } else if (status === 'broken') {
-                stats.available += 1;
                 stats.broken += 1;
+                stats.missing += 1;
             }
         });
 

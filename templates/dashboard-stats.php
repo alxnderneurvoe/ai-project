@@ -15,7 +15,7 @@
         <div class="card card-stat card-stat-total filter-card" id="cardTotal" data-filter="all">
             <div class="card-body">
                 <div class="stat-copy">
-                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider">Total Devices</h6>
+                    <h6 class="text-white-50 fw-semibold font-size-sm mb-1 text-uppercase tracking-wider">Total Devices</h6>
                     <h2 class="fw-bold text-white mb-0" id="totalDevice">0</h2>
                 </div>
                 <div class="stat-icon bg-indigo-subtle text-indigo">

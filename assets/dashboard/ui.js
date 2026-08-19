@@ -279,10 +279,10 @@ export class DashboardUI {
             availableEl.innerText = stats.available;
         }
         if (legacyEl) {
-            legacyEl.innerText = stats.legacy || 0;
+            legacyEl.innerText = stats.legacy;
         }
         if (brokenEl) {
-            brokenEl.innerText = stats.broken || 0;
+            brokenEl.innerText = stats.broken;
         }
         if (serviceEl) {
             serviceEl.innerText = stats.service;
