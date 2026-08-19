@@ -35,16 +35,6 @@ export function buildStatusBadge(status) {
             css: 'badge-available',
             icon: 'check-circle',
         },
-        legacy: {
-            label: 'Legacy',
-            css: 'badge-legacy',
-            icon: 'archive',
-        },
-        broken: {
-            label: 'Broken',
-            css: 'badge-broken',
-            icon: 'exclamation-triangle',
-        },
         service: {
             label: 'Service',
             css: 'badge-service',
