@@ -79,16 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             Login
                         </button>
                     </div>
-                    <div class="login-button-group">
-                        <button type="submit" class="btn btn-login">
-                            <i class="fas fa-right-to-bracket"></i>
-                            Login
-                        </button>
-                        <a href="apps.php" class="btn btn-download-apps">
-                            <i class="fas fa-cloud-arrow-down"></i>
-                            Download Apps
-                        </a>
-                    </div>
                 </form>
             </div>
         </div>
