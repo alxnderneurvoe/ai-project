@@ -43,6 +43,14 @@
     background-color: var(--text-secondary); 
 }
 
+.card-stat-legacy::after { 
+    background-color: var(--color-warning); 
+}
+
+.card-stat-broken::after { 
+    background-color: var(--color-danger); 
+}
+
 .card-stat-service::after { 
     background-color: var(--color-warning); 
 }

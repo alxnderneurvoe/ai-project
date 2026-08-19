@@ -28,7 +28,13 @@ export class DeviceStore {
             return true;
         }
 
-        return String(item.status || '').toLowerCase().trim() === this.currentFilter;
+        const status = String(item.status || '').toLowerCase().trim();
+
+        if (this.currentFilter === 'available') {
+            return ['available', 'legacy', 'broken'].includes(status);
+        }
+
+        return status === this.currentFilter;
     }
 
     matchesKeyword(item) {
@@ -55,17 +61,26 @@ export class DeviceStore {
             total: this.devices.length,
             assigned: 0,
             available: 0,
+            legacy: 0,
+            broken: 0,
             service: 0,
         };
 
         this.devices.forEach(item => {
             const status = String(item.status || '').toLowerCase().trim();
+
             if (status === 'assigned') {
                 stats.assigned += 1;
-            } else if (status === 'available') {
-                stats.available += 1;
             } else if (status === 'service') {
                 stats.service += 1;
+            } else if (status === 'available') {
+                stats.available += 1;
+            } else if (status === 'legacy') {
+                stats.available += 1;
+                stats.legacy += 1;
+            } else if (status === 'broken') {
+                stats.available += 1;
+                stats.broken += 1;
             }
         });
 

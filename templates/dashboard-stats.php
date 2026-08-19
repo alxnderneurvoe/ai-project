@@ -53,7 +53,35 @@
         </div>
     </div>
 
-    <div class="col-md-3 col-sm-6">
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-stat card-stat-legacy filter-card" id="cardLegacy" data-filter="legacy">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Legacy</h6>
+                    <h2 class="fw-bold text-white mb-0" id="legacyDevice">0</h2>
+                </div>
+                <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
+                    <i class="fas fa-archive fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-stat card-stat-broken filter-card" id="cardBroken" data-filter="broken">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-white-50 fw-semibold mb-1 text-uppercase tracking-wider" style="font-size: 0.75rem;">Broken</h6>
+                    <h2 class="fw-bold text-white mb-0" id="brokenDevice">0</h2>
+                </div>
+                <div class="stat-icon bg-danger-subtle text-danger rounded-3 p-3">
+                    <i class="fas fa-triangle-exclamation fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 col-sm-6">
         <div class="card card-stat card-stat-service filter-card" id="cardService" data-filter="service">
             <div class="card-body p-4 d-flex align-items-center justify-content-between">
                 <div>

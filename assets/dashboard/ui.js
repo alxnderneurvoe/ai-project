@@ -265,6 +265,8 @@ export class DashboardUI {
         const totalEl = document.getElementById('totalDevice');
         const assignedEl = document.getElementById('assignedDevice');
         const availableEl = document.getElementById('availableDevice');
+        const legacyEl = document.getElementById('legacyDevice');
+        const brokenEl = document.getElementById('brokenDevice');
         const serviceEl = document.getElementById('serviceDevice');
 
         if (totalEl) {
@@ -275,6 +277,12 @@ export class DashboardUI {
         }
         if (availableEl) {
             availableEl.innerText = stats.available;
+        }
+        if (legacyEl) {
+            legacyEl.innerText = stats.legacy || 0;
+        }
+        if (brokenEl) {
+            brokenEl.innerText = stats.broken || 0;
         }
         if (serviceEl) {
             serviceEl.innerText = stats.service;

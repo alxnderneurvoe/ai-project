@@ -253,6 +253,18 @@ body {
     color: #cbd5e1 !important;
 }
 
+.badge-legacy {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
+    color: #fbbf24 !important;
+}
+
+.badge-broken {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.2) !important;
+    color: #fca5a5 !important;
+}
+
 .badge-service {
     background-color: rgba(245, 158, 11, 0.1) !important;
     border-color: rgba(245, 158, 11, 0.2) !important;
